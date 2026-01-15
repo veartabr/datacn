@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
 import { ComponentDemoWrapper } from "@/components/component-demo-wrapper";
-import { CodeBlock } from "@/components/code-block";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { JsonLdScript } from "@/lib/seo/json-ld-script";
 import {
   createArticleSchema,
@@ -63,14 +55,13 @@ export default function PickersPage() {
       <div>
         <h1 className="font-bold text-4xl tracking-tight">Pickers</h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Date range pickers and time granularity selectors for filtering
-          and controlling chart data with datacn.
+          Date range pickers and time granularity selectors for filtering and
+          controlling chart data with datacn.
         </p>
       </div>
 
       <ComponentDemoWrapper
-        title="Date Range Picker"
-        description="Select date ranges with preset options and timezone support"
+        className="mb-6"
         code={dateRangePickerCode}
         data={{
           example: {
@@ -79,17 +70,18 @@ export default function PickersPage() {
             timezone: "UTC",
           },
         }}
-        className="mb-6"
+        description="Select date ranges with preset options and timezone support"
+        title="Date Range Picker"
       />
 
       <ComponentDemoWrapper
-        title="Time Granularity Picker"
-        description="Select time granularity for time series charts"
         code={granularityPickerCode}
         data={{
           options: ["day", "week", "month", "quarter", "year"],
           default: "day",
         }}
+        description="Select time granularity for time series charts"
+        title="Time Granularity Picker"
       />
     </>
   );

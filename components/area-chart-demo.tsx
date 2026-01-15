@@ -3,7 +3,10 @@
 import { areaChartData } from "@/app/examples/data";
 import { ChartDemo } from "@/components/chart-demo";
 import { AreaChart } from "@/lib/data-viz/components/charts/area-chart";
-import { getColorScheme, type ColorSchemeId } from "@/lib/data-viz/core/color-schemes";
+import {
+  type ColorSchemeId,
+  getColorScheme,
+} from "@/lib/data-viz/core/color-schemes";
 import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
 
 interface AreaChartDemoProps {

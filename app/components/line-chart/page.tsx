@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
 import { LineChartDemoWrapper } from "@/components/line-chart-demo-wrapper";
-import { CodeBlock } from "@/components/code-block";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { JsonLdScript } from "@/lib/seo/json-ld-script";
 import {
   createArticleSchema,
@@ -65,8 +57,8 @@ export default function LineChartPage() {
       <div>
         <h1 className="font-bold text-4xl tracking-tight">Line Chart</h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Create multi-line charts with datacn. Perfect for showing trends
-          over time with multiple data series.
+          Create multi-line charts with datacn. Perfect for showing trends over
+          time with multiple data series.
         </p>
       </div>
 

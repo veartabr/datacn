@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
 import { TimeSeriesChartDemoWrapper } from "@/components/time-series-chart-demo-wrapper";
-import { CodeBlock } from "@/components/code-block";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { JsonLdScript } from "@/lib/seo/json-ld-script";
 import {
   createArticleSchema,
@@ -59,12 +51,10 @@ export default function TimeSeriesChartPage() {
       <JsonLdScript schema={breadcrumbSchema} />
       <JsonLdScript schema={articleSchema} />
       <div>
-        <h1 className="font-bold text-4xl tracking-tight">
-          Time Series Chart
-        </h1>
+        <h1 className="font-bold text-4xl tracking-tight">Time Series Chart</h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Create time series charts with automatic binning and timezone
-          support. Perfect for temporal data visualization.
+          Create time series charts with automatic binning and timezone support.
+          Perfect for temporal data visualization.
         </p>
       </div>
 

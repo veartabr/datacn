@@ -1,13 +1,17 @@
 "use client";
 
+import { Cell, Pie, PieChart as RechartsPieChart } from "recharts";
 import {
-  Cell,
-  Legend,
-  Pie,
-  PieChart as RechartsPieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  createPieChartConfig,
+  getColorVariable,
+} from "../../core/chart-config";
 import { DEFAULT_COLORS } from "../../core/constants";
 import type { ChartData, PieChartConfig } from "../../core/types";
 import { validateChartData } from "../../data/formats";
@@ -36,9 +40,10 @@ export function PieChart({ data, config, className }: PieChartProps) {
   }
 
   const colors = config.colors || DEFAULT_COLORS;
+  const chartConfig = createPieChartConfig(config, colors, data.data);
 
   return (
-    <ResponsiveContainer className={className} height="100%" width="100%">
+    <ChartContainer className={className} config={chartConfig}>
       <RechartsPieChart>
         <Pie
           cx="50%"
@@ -49,13 +54,14 @@ export function PieChart({ data, config, className }: PieChartProps) {
           nameKey={config.nameKey}
           outerRadius={80}
         >
-          {data.data.map((_entry, index) => (
-            <Cell fill={colors[index % colors.length]} key={`cell-${index}`} />
-          ))}
+          {data.data.map((entry) => {
+            const nameValue = String(entry[config.nameKey]);
+            return <Cell fill={getColorVariable(nameValue)} key={nameValue} />;
+          })}
         </Pie>
-        <Tooltip />
-        <Legend />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartLegend content={<ChartLegendContent />} />
       </RechartsPieChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   );
 }

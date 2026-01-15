@@ -1,10 +1,10 @@
 "use client";
 
 import { barChartData } from "@/app/examples/data";
-import { ChartDemoWrapper } from "@/components/chart-demo-wrapper";
 import { BarChartDemo } from "@/components/bar-chart-demo";
-import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
+import { ChartDemoWrapper } from "@/components/chart-demo-wrapper";
 import type { ColorSchemeId } from "@/lib/data-viz/core/color-schemes";
+import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
 
 interface BarChartDemoWrapperProps {
   code: string;
@@ -18,9 +18,9 @@ export function BarChartDemoWrapper({ code }: BarChartDemoWrapperProps) {
       chart={(colorScheme: ColorSchemeId) => (
         <BarChartDemo colorScheme={colorScheme} />
       )}
-      rawData={barChartData.data}
-      processedData={processedData}
       code={code}
+      processedData={processedData}
+      rawData={barChartData.data}
     />
   );
 }

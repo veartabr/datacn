@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
 import { ComponentDemoWrapper } from "@/components/component-demo-wrapper";
-import { CodeBlock } from "@/components/code-block";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { JsonLdScript } from "@/lib/seo/json-ld-script";
 import {
   createArticleSchema,
@@ -66,14 +58,12 @@ export default function MarkersPage() {
       <div>
         <h1 className="font-bold text-4xl tracking-tight">Markers</h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Add timestamped markers and annotations to your charts with
-          datacn. Highlight important events and milestones.
+          Add timestamped markers and annotations to your charts with datacn.
+          Highlight important events and milestones.
         </p>
       </div>
 
       <ComponentDemoWrapper
-        title="Timestamped Markers"
-        description="Add vertical lines, dots, or annotation boxes to highlight events"
         code={markerCode}
         data={[
           {
@@ -89,6 +79,8 @@ export default function MarkersPage() {
             type: "annotation",
           },
         ]}
+        description="Add vertical lines, dots, or annotation boxes to highlight events"
+        title="Timestamped Markers"
       />
     </>
   );

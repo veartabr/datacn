@@ -9,6 +9,7 @@ export * from "./components/markers/annotation-layer";
 export * from "./components/markers/timestamp-marker";
 export * from "./components/pickers/date-range-picker";
 export * from "./components/pickers/time-granularity-picker";
+export * from "./core/chart-config";
 export * from "./core/constants";
 export * from "./core/schemas";
 export * from "./core/types";

@@ -27,7 +27,7 @@ export function ColorSchemeSelector({
   const currentScheme = getColorScheme(value);
 
   return (
-    <Select value={value} onValueChange={onValueChange}>
+    <Select onValueChange={onValueChange} value={value}>
       <SelectTrigger className={className}>
         <SelectValue>
           <div className="flex items-center gap-2">
@@ -43,8 +43,8 @@ export function ColorSchemeSelector({
               <div className="flex gap-1">
                 {scheme.colors.slice(0, 3).map((color, idx) => (
                   <div
-                    key={idx}
                     className="h-4 w-4 rounded-full border border-border"
+                    key={idx}
                     style={{ backgroundColor: color }}
                   />
                 ))}

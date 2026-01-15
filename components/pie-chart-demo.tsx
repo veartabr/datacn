@@ -3,7 +3,10 @@
 import { pieChartData } from "@/app/examples/data";
 import { ChartDemo } from "@/components/chart-demo";
 import { PieChart } from "@/lib/data-viz/components/charts/pie-chart";
-import { getColorScheme, type ColorSchemeId } from "@/lib/data-viz/core/color-schemes";
+import {
+  type ColorSchemeId,
+  getColorScheme,
+} from "@/lib/data-viz/core/color-schemes";
 import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
 
 interface PieChartDemoProps {

@@ -3,8 +3,8 @@
 import { pieChartData } from "@/app/examples/data";
 import { ChartDemoWrapper } from "@/components/chart-demo-wrapper";
 import { PieChartDemo } from "@/components/pie-chart-demo";
-import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
 import type { ColorSchemeId } from "@/lib/data-viz/core/color-schemes";
+import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
 
 interface PieChartDemoWrapperProps {
   code: string;
@@ -18,9 +18,9 @@ export function PieChartDemoWrapper({ code }: PieChartDemoWrapperProps) {
       chart={(colorScheme: ColorSchemeId) => (
         <PieChartDemo colorScheme={colorScheme} />
       )}
-      rawData={pieChartData.data}
-      processedData={processedData}
       code={code}
+      processedData={processedData}
+      rawData={pieChartData.data}
     />
   );
 }

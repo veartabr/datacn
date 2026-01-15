@@ -36,12 +36,12 @@ export function ComponentDemoWrapper({
         </CardHeader>
       )}
       <CardContent className="space-y-4">
-        <Tabs defaultValue="preview" className="w-full">
+        <Tabs className="w-full" defaultValue="preview">
           <TabsList>
             <TabsTrigger value="preview">Preview</TabsTrigger>
             <TabsTrigger value="data">Data as a table</TabsTrigger>
           </TabsList>
-          <TabsContent value="preview" className="mt-4">
+          <TabsContent className="mt-4" value="preview">
             {preview ? (
               <div className="rounded-lg border bg-background p-4">
                 {preview}
@@ -54,7 +54,7 @@ export function ComponentDemoWrapper({
               </div>
             )}
           </TabsContent>
-          <TabsContent value="data" className="mt-4">
+          <TabsContent className="mt-4" value="data">
             {data ? (
               <div className="rounded-md border bg-muted p-4">
                 <pre className="overflow-x-auto text-xs">

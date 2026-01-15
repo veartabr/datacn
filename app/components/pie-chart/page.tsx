@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
 import { PieChartDemoWrapper } from "@/components/pie-chart-demo-wrapper";
-import { CodeBlock } from "@/components/code-block";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { JsonLdScript } from "@/lib/seo/json-ld-script";
 import {
   createArticleSchema,

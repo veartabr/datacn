@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
 import { ComponentDemoWrapper } from "@/components/component-demo-wrapper";
-import { CodeBlock } from "@/components/code-block";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { JsonLdScript } from "@/lib/seo/json-ld-script";
 import {
   createArticleSchema,
@@ -69,24 +61,24 @@ export default function LegendsPage() {
       </div>
 
       <ComponentDemoWrapper
-        title="Chart Legend"
-        description="Static legend component"
+        className="mb-6"
         code={chartLegendCode}
         data={[
           { label: "Revenue", color: "hsl(var(--chart-1))" },
           { label: "Users", color: "hsl(var(--chart-2))" },
         ]}
-        className="mb-6"
+        description="Static legend component"
+        title="Chart Legend"
       />
 
       <ComponentDemoWrapper
-        title="Interactive Legend"
-        description="Legend with toggle functionality"
         code={interactiveLegendCode}
         data={[
           { label: "Revenue", color: "hsl(var(--chart-1))", visible: true },
           { label: "Users", color: "hsl(var(--chart-2))", visible: true },
         ]}
+        description="Legend with toggle functionality"
+        title="Interactive Legend"
       />
     </>
   );

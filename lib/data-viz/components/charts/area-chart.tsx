@@ -3,12 +3,21 @@
 import {
   Area,
   CartesianGrid,
-  Legend,
   AreaChart as RechartsAreaChart,
-  ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  createAreaChartConfig,
+  getColorVariable,
+} from "../../core/chart-config";
 import { DEFAULT_COLORS, DEFAULT_CURVE } from "../../core/constants";
 import type { AreaChartConfig, ChartData } from "../../core/types";
 import { validateChartData } from "../../data/formats";
@@ -21,12 +30,7 @@ export interface AreaChartProps {
   className?: string;
 }
 
-export function AreaChart({
-  data,
-  config,
-  timezone,
-  className,
-}: AreaChartProps) {
+export function AreaChart({ data, config, className }: AreaChartProps) {
   if (!validateChartData(data, "area")) {
     return (
       <div className={className}>
@@ -45,19 +49,21 @@ export function AreaChart({
 
   const colors = config.colors || DEFAULT_COLORS;
   const curve = config.curve || DEFAULT_CURVE;
+  const chartConfig = createAreaChartConfig(config, colors);
 
   return (
-    <ResponsiveContainer className={className} height="100%" width="100%">
+    <ChartContainer className={className} config={chartConfig}>
       <RechartsAreaChart
         accessibilityLayer
         data={data.data}
         margin={{ top: 10, right: 10 }}
         stackOffset={config.stacked ? "expand" : undefined}
       >
-        <CartesianGrid strokeDasharray="2 2" />
+        <CartesianGrid strokeDasharray="2 2" vertical={false} />
         <XAxis
+          axisLine={false}
           dataKey={config.xKey}
-          scale="time"
+          scale={data.metadata.types[config.xKey] === "date" ? "time" : undefined}
           tickFormatter={(value) => {
             if (data.metadata.types[config.xKey] === "date") {
               const date = parseDate(value);
@@ -65,24 +71,26 @@ export function AreaChart({
             }
             return String(value);
           }}
+          tickLine={false}
           type={
             data.metadata.types[config.xKey] === "date" ? "number" : "category"
           }
         />
-        <YAxis />
-        <Legend />
-        {config.yKeys.map((key, index) => (
+        <YAxis axisLine={false} tickLine={false} />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartLegend content={<ChartLegendContent />} />
+        {config.yKeys.map((key) => (
           <Area
             dataKey={key}
-            fill={colors[index % colors.length]}
+            fill={getColorVariable(key)}
             fillOpacity={0.6}
             key={key}
             stackId={config.stacked ? "1" : undefined}
-            stroke={colors[index % colors.length]}
+            stroke={getColorVariable(key)}
             type={curve}
           />
         ))}
       </RechartsAreaChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   );
 }

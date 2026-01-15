@@ -2,13 +2,22 @@
 
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart as RechartsLineChart,
-  ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  createLineChartConfig,
+  getColorVariable,
+} from "../../core/chart-config";
 import {
   DEFAULT_COLORS,
   DEFAULT_CURVE,
@@ -30,13 +39,7 @@ export interface LineChartProps {
   className?: string;
 }
 
-export function LineChart({
-  data,
-  config,
-  markers,
-  timezone,
-  className,
-}: LineChartProps) {
+export function LineChart({ data, config, className }: LineChartProps) {
   if (!validateChartData(data, "line")) {
     return (
       <div className={className}>
@@ -56,14 +59,16 @@ export function LineChart({
   const colors = config.colors || DEFAULT_COLORS;
   const strokeWidth = config.strokeWidth || DEFAULT_STROKE_WIDTH;
   const curve = config.curve || DEFAULT_CURVE;
+  const chartConfig = createLineChartConfig(config, colors);
 
   return (
-    <ResponsiveContainer className={className} height="100%" width="100%">
-      <RechartsLineChart data={data.data}>
-        <CartesianGrid strokeDasharray="3 3" />
+    <ChartContainer className={className} config={chartConfig}>
+      <RechartsLineChart accessibilityLayer data={data.data}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} />
         <XAxis
+          axisLine={false}
           dataKey={config.xKey}
-          scale="time"
+          scale={data.metadata.types[config.xKey] === "date" ? "time" : undefined}
           tickFormatter={(value) => {
             if (data.metadata.types[config.xKey] === "date") {
               const date = parseDate(value);
@@ -71,24 +76,26 @@ export function LineChart({
             }
             return String(value);
           }}
+          tickLine={false}
           type={
             data.metadata.types[config.xKey] === "date" ? "number" : "category"
           }
         />
-        <YAxis />
-        <Legend />
-        {config.yKeys.map((key, index) => (
+        <YAxis axisLine={false} tickLine={false} />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartLegend content={<ChartLegendContent />} />
+        {config.yKeys.map((key) => (
           <Line
             activeDot={{ r: 6 }}
             dataKey={key}
             dot={{ r: 4 }}
             key={key}
-            stroke={colors[index % colors.length]}
+            stroke={getColorVariable(key)}
             strokeWidth={strokeWidth}
             type={curve}
           />
         ))}
       </RechartsLineChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   );
 }

@@ -9,8 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { ChartData, DataPoint, TimeSeriesDataPoint } from "@/lib/data-viz/core/types";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  ChartData,
+  DataPoint,
+  TimeSeriesDataPoint,
+} from "@/lib/data-viz/core/types";
 import { parseDate } from "@/lib/data-viz/time/date-utils";
 
 interface DataTableProps {
@@ -39,11 +43,20 @@ function formatValue(value: unknown, type?: string): string {
   return String(value);
 }
 
-function DataTableContent({ data, columns }: { data: DataPoint[]; columns: string[] }) {
+function DataTableContent({
+  data,
+  columns,
+}: {
+  data: DataPoint[];
+  columns: string[];
+}) {
   if (!data || data.length === 0) {
     return (
       <TableRow>
-        <TableCell colSpan={columns.length} className="text-center text-muted-foreground">
+        <TableCell
+          className="text-center text-muted-foreground"
+          colSpan={columns.length}
+        >
           No data available
         </TableCell>
       </TableRow>
@@ -55,9 +68,7 @@ function DataTableContent({ data, columns }: { data: DataPoint[]; columns: strin
       {data.map((row, rowIndex) => (
         <TableRow key={rowIndex}>
           {columns.map((column) => (
-            <TableCell key={column}>
-              {formatValue(row[column])}
-            </TableCell>
+            <TableCell key={column}>{formatValue(row[column])}</TableCell>
           ))}
         </TableRow>
       ))}
@@ -65,11 +76,18 @@ function DataTableContent({ data, columns }: { data: DataPoint[]; columns: strin
   );
 }
 
-export function DataTable({ rawData, processedData, className }: DataTableProps) {
+export function DataTable({
+  rawData,
+  processedData,
+  className,
+}: DataTableProps) {
   const [dataView, setDataView] = useState<"raw" | "processed">("raw");
 
   const hasBothViews = rawData && processedData;
-  const displayData = dataView === "raw" && rawData ? rawData : processedData?.data || rawData || [];
+  const displayData =
+    dataView === "raw" && rawData
+      ? rawData
+      : processedData?.data || rawData || [];
   const columns =
     dataView === "processed" && processedData
       ? processedData.metadata.columns
@@ -77,7 +95,7 @@ export function DataTable({ rawData, processedData, className }: DataTableProps)
         ? Object.keys(rawData[0])
         : [];
 
-  if (!rawData && !processedData) {
+  if (!(rawData || processedData)) {
     return (
       <div className={className}>
         <p className="text-muted-foreground text-sm">No data available</p>
@@ -89,7 +107,10 @@ export function DataTable({ rawData, processedData, className }: DataTableProps)
     <div className={className}>
       {hasBothViews && (
         <div className="mb-4 flex items-center gap-2">
-          <Tabs value={dataView} onValueChange={(v) => setDataView(v as "raw" | "processed")}>
+          <Tabs
+            onValueChange={(v) => setDataView(v as "raw" | "processed")}
+            value={dataView}
+          >
             <TabsList>
               <TabsTrigger value="raw">Raw Data</TabsTrigger>
               <TabsTrigger value="processed">Processed Data</TabsTrigger>
@@ -108,14 +129,14 @@ export function DataTable({ rawData, processedData, className }: DataTableProps)
             </TableRow>
           </TableHeader>
           <TableBody>
-            <DataTableContent data={displayData} columns={columns} />
+            <DataTableContent columns={columns} data={displayData} />
           </TableBody>
         </Table>
       </div>
 
       {processedData && (
         <div className="mt-4 rounded-md border bg-muted/50 p-3 text-xs">
-          <p className="font-medium mb-1">Metadata:</p>
+          <p className="mb-1 font-medium">Metadata:</p>
           <ul className="space-y-1 text-muted-foreground">
             <li>Columns: {processedData.metadata.columns.join(", ")}</li>
             <li>

@@ -17,8 +17,8 @@ export function TimeSeriesChartDemoWrapper({
       chart={(colorScheme: ColorSchemeId) => (
         <TimeSeriesChartDemo colorScheme={colorScheme} />
       )}
-      rawData={timeSeriesData}
       code={code}
+      rawData={timeSeriesData}
     />
   );
 }
