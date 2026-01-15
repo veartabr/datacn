@@ -1,10 +1,7 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createPageMetadata } from "@/app/metadata";
 import { BarChartDemo } from "@/components/bar-chart-demo";
 import { CodeBlock } from "@/components/code-block";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -86,63 +83,52 @@ export default function BarChartPage() {
     <>
       <JsonLdScript schema={breadcrumbSchema} />
       <JsonLdScript schema={articleSchema} />
-      <div className="container py-8">
-        <Button asChild className="mb-8" variant="ghost">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-
-        <div className="mx-auto max-w-4xl space-y-8">
-          <div>
-            <h1 className="font-bold text-4xl tracking-tight">Bar Chart</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Create beautiful bar charts with datacn. Supports horizontal and
-              vertical orientations, stacking, and custom colors.
-            </p>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Import</CardTitle>
-              <CardDescription>
-                Import the BarChart component from the library
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={importCode} language="typescript" />
-            </CardContent>
-          </Card>
-
-          <div>
-            <h2 className="mb-4 font-semibold text-2xl tracking-tight">
-              Example
-            </h2>
-            <BarChartDemo />
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Code</CardTitle>
-              <CardDescription>Full implementation example</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={exampleCode} language="typescript" />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>API Reference</CardTitle>
-              <CardDescription>Props and configuration options</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={propsCode} language="typescript" />
-            </CardContent>
-          </Card>
-        </div>
+      <div>
+        <h1 className="font-bold text-4xl tracking-tight">Bar Chart</h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Create beautiful bar charts with datacn. Supports horizontal and
+          vertical orientations, stacking, and custom colors.
+        </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Import</CardTitle>
+          <CardDescription>
+            Import the BarChart component from the library
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={importCode} language="typescript" />
+        </CardContent>
+      </Card>
+
+      <div>
+        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
+          Example
+        </h2>
+        <BarChartDemo />
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Code</CardTitle>
+          <CardDescription>Full implementation example</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={exampleCode} language="typescript" />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>API Reference</CardTitle>
+          <CardDescription>Props and configuration options</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={propsCode} language="typescript" />
+        </CardContent>
+      </Card>
     </>
   );
 }

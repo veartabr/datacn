@@ -1,10 +1,7 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createPageMetadata } from "@/app/metadata";
 import { CodeBlock } from "@/components/code-block";
 import { PieChartDemo } from "@/components/pie-chart-demo";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -64,41 +61,30 @@ export default function PieChartPage() {
     <>
       <JsonLdScript schema={breadcrumbSchema} />
       <JsonLdScript schema={articleSchema} />
-      <div className="container py-8">
-        <Button asChild className="mb-8" variant="ghost">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-
-        <div className="mx-auto max-w-4xl space-y-8">
-          <div>
-            <h1 className="font-bold text-4xl tracking-tight">Pie Chart</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Create beautiful pie charts with datacn. Perfect for showing
-              proportional data and category distributions.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="mb-4 font-semibold text-2xl tracking-tight">
-              Example
-            </h2>
-            <PieChartDemo />
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Code</CardTitle>
-              <CardDescription>Full implementation example</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={exampleCode} language="typescript" />
-            </CardContent>
-          </Card>
-        </div>
+      <div>
+        <h1 className="font-bold text-4xl tracking-tight">Pie Chart</h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Create beautiful pie charts with datacn. Perfect for showing
+          proportional data and category distributions.
+        </p>
       </div>
+
+      <div>
+        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
+          Example
+        </h2>
+        <PieChartDemo />
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Code</CardTitle>
+          <CardDescription>Full implementation example</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={exampleCode} language="typescript" />
+        </CardContent>
+      </Card>
     </>
   );
 }

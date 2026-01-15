@@ -1,5 +1,18 @@
+import type {
+  ArticleSchema,
+  BreadcrumbListSchema,
+  SoftwareApplicationSchema,
+  WebSiteSchema,
+} from "./structured-data";
+
+type JsonLdSchema =
+  | ArticleSchema
+  | BreadcrumbListSchema
+  | SoftwareApplicationSchema
+  | WebSiteSchema;
+
 interface JsonLdScriptProps {
-  schema: Record<string, unknown>;
+  schema: JsonLdSchema;
 }
 
 export function JsonLdScript({ schema }: JsonLdScriptProps) {

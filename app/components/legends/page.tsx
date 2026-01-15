@@ -1,9 +1,6 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createPageMetadata } from "@/app/metadata";
 import { CodeBlock } from "@/components/code-block";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -62,46 +59,35 @@ export default function LegendsPage() {
     <>
       <JsonLdScript schema={breadcrumbSchema} />
       <JsonLdScript schema={articleSchema} />
-      <div className="container py-8">
-        <Button asChild className="mb-8" variant="ghost">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-
-        <div className="mx-auto max-w-4xl space-y-8">
-          <div>
-            <h1 className="font-bold text-4xl tracking-tight">Legends</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Create interactive and static legends for your charts with datacn.
-              Toggle series visibility and customize appearance.
-            </p>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Chart Legend</CardTitle>
-              <CardDescription>Static legend component</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={chartLegendCode} language="typescript" />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Interactive Legend</CardTitle>
-              <CardDescription>
-                Legend with toggle functionality
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={interactiveLegendCode} language="typescript" />
-            </CardContent>
-          </Card>
-        </div>
+      <div>
+        <h1 className="font-bold text-4xl tracking-tight">Legends</h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Create interactive and static legends for your charts with datacn.
+          Toggle series visibility and customize appearance.
+        </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Chart Legend</CardTitle>
+          <CardDescription>Static legend component</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={chartLegendCode} language="typescript" />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Interactive Legend</CardTitle>
+          <CardDescription>
+            Legend with toggle functionality
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={interactiveLegendCode} language="typescript" />
+        </CardContent>
+      </Card>
     </>
   );
 }

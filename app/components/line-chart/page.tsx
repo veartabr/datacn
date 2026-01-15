@@ -1,10 +1,7 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createPageMetadata } from "@/app/metadata";
 import { CodeBlock } from "@/components/code-block";
 import { LineChartDemo } from "@/components/line-chart-demo";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -65,41 +62,30 @@ export default function LineChartPage() {
     <>
       <JsonLdScript schema={breadcrumbSchema} />
       <JsonLdScript schema={articleSchema} />
-      <div className="container py-8">
-        <Button asChild className="mb-8" variant="ghost">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-
-        <div className="mx-auto max-w-4xl space-y-8">
-          <div>
-            <h1 className="font-bold text-4xl tracking-tight">Line Chart</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Create multi-line charts with datacn. Perfect for showing trends
-              over time with multiple data series.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="mb-4 font-semibold text-2xl tracking-tight">
-              Example
-            </h2>
-            <LineChartDemo />
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Code</CardTitle>
-              <CardDescription>Full implementation example</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={exampleCode} language="typescript" />
-            </CardContent>
-          </Card>
-        </div>
+      <div>
+        <h1 className="font-bold text-4xl tracking-tight">Line Chart</h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Create multi-line charts with datacn. Perfect for showing trends
+          over time with multiple data series.
+        </p>
       </div>
+
+      <div>
+        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
+          Example
+        </h2>
+        <LineChartDemo />
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Code</CardTitle>
+          <CardDescription>Full implementation example</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={exampleCode} language="typescript" />
+        </CardContent>
+      </Card>
     </>
   );
 }

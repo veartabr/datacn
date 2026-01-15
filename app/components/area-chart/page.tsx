@@ -1,10 +1,7 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createPageMetadata } from "@/app/metadata";
 import { AreaChartDemo } from "@/components/area-chart-demo";
 import { CodeBlock } from "@/components/code-block";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -64,41 +61,26 @@ export default function AreaChartPage() {
     <>
       <JsonLdScript schema={breadcrumbSchema} />
       <JsonLdScript schema={articleSchema} />
-      <div className="container py-8">
-        <Button asChild className="mb-8" variant="ghost">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-
-        <div className="mx-auto max-w-4xl space-y-8">
-          <div>
-            <h1 className="font-bold text-4xl tracking-tight">Area Chart</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Create stacked or overlapping area charts with datacn. Great for
-              showing cumulative values over time.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="mb-4 font-semibold text-2xl tracking-tight">
-              Example
-            </h2>
-            <AreaChartDemo />
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Code</CardTitle>
-              <CardDescription>Full implementation example</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={exampleCode} language="typescript" />
-            </CardContent>
-          </Card>
-        </div>
+      <div>
+        <h1 className="font-bold text-4xl tracking-tight">Area Chart</h1>
       </div>
+
+      <div>
+        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
+          Example
+        </h2>
+        <AreaChartDemo />
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Code</CardTitle>
+          <CardDescription>Full implementation example</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={exampleCode} language="typescript" />
+        </CardContent>
+      </Card>
     </>
   );
 }

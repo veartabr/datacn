@@ -1,9 +1,6 @@
-import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createPageMetadata } from "@/app/metadata";
 import { CodeBlock } from "@/components/code-block";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -65,37 +62,26 @@ export default function MarkersPage() {
     <>
       <JsonLdScript schema={breadcrumbSchema} />
       <JsonLdScript schema={articleSchema} />
-      <div className="container py-8">
-        <Button asChild className="mb-8" variant="ghost">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-
-        <div className="mx-auto max-w-4xl space-y-8">
-          <div>
-            <h1 className="font-bold text-4xl tracking-tight">Markers</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Add timestamped markers and annotations to your charts with
-              datacn. Highlight important events and milestones.
-            </p>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Timestamped Markers</CardTitle>
-              <CardDescription>
-                Add vertical lines, dots, or annotation boxes to highlight
-                events
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CodeBlock code={markerCode} language="typescript" />
-            </CardContent>
-          </Card>
-        </div>
+      <div>
+        <h1 className="font-bold text-4xl tracking-tight">Markers</h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Add timestamped markers and annotations to your charts with
+          datacn. Highlight important events and milestones.
+        </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Timestamped Markers</CardTitle>
+          <CardDescription>
+            Add vertical lines, dots, or annotation boxes to highlight
+            events
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CodeBlock code={markerCode} language="typescript" />
+        </CardContent>
+      </Card>
     </>
   );
 }
