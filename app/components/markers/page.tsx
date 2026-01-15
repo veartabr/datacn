@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
+import { ComponentDemoWrapper } from "@/components/component-demo-wrapper";
 import { CodeBlock } from "@/components/code-block";
 import {
   Card,
@@ -70,18 +71,25 @@ export default function MarkersPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Timestamped Markers</CardTitle>
-          <CardDescription>
-            Add vertical lines, dots, or annotation boxes to highlight
-            events
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CodeBlock code={markerCode} language="typescript" />
-        </CardContent>
-      </Card>
+      <ComponentDemoWrapper
+        title="Timestamped Markers"
+        description="Add vertical lines, dots, or annotation boxes to highlight events"
+        code={markerCode}
+        data={[
+          {
+            timestamp: "2024-01-15T00:00:00Z",
+            label: "Product Launch",
+            color: "#ef4444",
+            type: "line",
+          },
+          {
+            timestamp: "2024-02-01T00:00:00Z",
+            label: "Major Update",
+            color: "#3b82f6",
+            type: "annotation",
+          },
+        ]}
+      />
     </>
   );
 }

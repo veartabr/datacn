@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
+import { LineChartDemoWrapper } from "@/components/line-chart-demo-wrapper";
 import { CodeBlock } from "@/components/code-block";
-import { LineChartDemo } from "@/components/line-chart-demo";
 import {
   Card,
   CardContent,
@@ -70,22 +70,7 @@ export default function LineChartPage() {
         </p>
       </div>
 
-      <div>
-        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
-          Example
-        </h2>
-        <LineChartDemo />
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Code</CardTitle>
-          <CardDescription>Full implementation example</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CodeBlock code={exampleCode} language="typescript" />
-        </CardContent>
-      </Card>
+      <LineChartDemoWrapper code={exampleCode} />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
-import { AreaChartDemo } from "@/components/area-chart-demo";
+import { AreaChartDemoWrapper } from "@/components/area-chart-demo-wrapper";
 import { CodeBlock } from "@/components/code-block";
 import {
   Card,
@@ -65,22 +65,7 @@ export default function AreaChartPage() {
         <h1 className="font-bold text-4xl tracking-tight">Area Chart</h1>
       </div>
 
-      <div>
-        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
-          Example
-        </h2>
-        <AreaChartDemo />
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Code</CardTitle>
-          <CardDescription>Full implementation example</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CodeBlock code={exampleCode} language="typescript" />
-        </CardContent>
-      </Card>
+      <AreaChartDemoWrapper code={exampleCode} />
     </>
   );
 }

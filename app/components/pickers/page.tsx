@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
+import { ComponentDemoWrapper } from "@/components/component-demo-wrapper";
 import { CodeBlock } from "@/components/code-block";
 import {
   Card,
@@ -67,29 +68,29 @@ export default function PickersPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Date Range Picker</CardTitle>
-          <CardDescription>
-            Select date ranges with preset options and timezone support
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CodeBlock code={dateRangePickerCode} language="typescript" />
-        </CardContent>
-      </Card>
+      <ComponentDemoWrapper
+        title="Date Range Picker"
+        description="Select date ranges with preset options and timezone support"
+        code={dateRangePickerCode}
+        data={{
+          example: {
+            from: "2024-01-01",
+            to: "2024-01-31",
+            timezone: "UTC",
+          },
+        }}
+        className="mb-6"
+      />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Time Granularity Picker</CardTitle>
-          <CardDescription>
-            Select time granularity for time series charts
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CodeBlock code={granularityPickerCode} language="typescript" />
-        </CardContent>
-      </Card>
+      <ComponentDemoWrapper
+        title="Time Granularity Picker"
+        description="Select time granularity for time series charts"
+        code={granularityPickerCode}
+        data={{
+          options: ["day", "week", "month", "quarter", "year"],
+          default: "day",
+        }}
+      />
     </>
   );
 }

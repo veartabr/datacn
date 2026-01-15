@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
+import { ComponentDemoWrapper } from "@/components/component-demo-wrapper";
 import { CodeBlock } from "@/components/code-block";
 import {
   Card,
@@ -67,27 +68,26 @@ export default function LegendsPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Chart Legend</CardTitle>
-          <CardDescription>Static legend component</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CodeBlock code={chartLegendCode} language="typescript" />
-        </CardContent>
-      </Card>
+      <ComponentDemoWrapper
+        title="Chart Legend"
+        description="Static legend component"
+        code={chartLegendCode}
+        data={[
+          { label: "Revenue", color: "hsl(var(--chart-1))" },
+          { label: "Users", color: "hsl(var(--chart-2))" },
+        ]}
+        className="mb-6"
+      />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Interactive Legend</CardTitle>
-          <CardDescription>
-            Legend with toggle functionality
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CodeBlock code={interactiveLegendCode} language="typescript" />
-        </CardContent>
-      </Card>
+      <ComponentDemoWrapper
+        title="Interactive Legend"
+        description="Legend with toggle functionality"
+        code={interactiveLegendCode}
+        data={[
+          { label: "Revenue", color: "hsl(var(--chart-1))", visible: true },
+          { label: "Users", color: "hsl(var(--chart-2))", visible: true },
+        ]}
+      />
     </>
   );
 }

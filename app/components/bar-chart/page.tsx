@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
-import { BarChartDemo } from "@/components/bar-chart-demo";
+import { BarChartDemoWrapper } from "@/components/bar-chart-demo-wrapper";
 import { CodeBlock } from "@/components/code-block";
 import {
   Card,
@@ -103,20 +103,15 @@ export default function BarChartPage() {
         </CardContent>
       </Card>
 
-      <div>
-        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
-          Example
-        </h2>
-        <BarChartDemo />
-      </div>
+      <BarChartDemoWrapper code={exampleCode} />
 
-      <Card>
+      <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Code</CardTitle>
-          <CardDescription>Full implementation example</CardDescription>
+          <CardTitle>API Reference</CardTitle>
+          <CardDescription>Props and configuration options</CardDescription>
         </CardHeader>
         <CardContent>
-          <CodeBlock code={exampleCode} language="typescript" />
+          <CodeBlock code={propsCode} language="typescript" />
         </CardContent>
       </Card>
 

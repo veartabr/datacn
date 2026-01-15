@@ -3,17 +3,26 @@
 import { barChartData } from "@/app/examples/data";
 import { ChartDemo } from "@/components/chart-demo";
 import { BarChart } from "@/lib/data-viz/components/charts/bar-chart";
+import { getColorScheme, type ColorSchemeId } from "@/lib/data-viz/core/color-schemes";
 import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
 
-export function BarChartDemo() {
+interface BarChartDemoProps {
+  colorScheme?: ColorSchemeId;
+}
+
+export function BarChartDemo({ colorScheme = "default" }: BarChartDemoProps) {
   const { data } = useChartData(barChartData.data);
+  const scheme = getColorScheme(colorScheme);
+  const config = {
+    xKey: "month",
+    yKey: "revenue",
+    color: scheme.colors[0],
+  };
 
   return (
     <ChartDemo
-      chart={
-        <BarChart config={{ xKey: "month", yKey: "revenue" }} data={data} />
-      }
-      config={{ xKey: "month", yKey: "revenue" }}
+      chart={<BarChart config={config} data={data} />}
+      config={config}
       data={barChartData.data}
     />
   );

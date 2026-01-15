@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/app/metadata";
+import { PieChartDemoWrapper } from "@/components/pie-chart-demo-wrapper";
 import { CodeBlock } from "@/components/code-block";
-import { PieChartDemo } from "@/components/pie-chart-demo";
 import {
   Card,
   CardContent,
@@ -69,22 +69,7 @@ export default function PieChartPage() {
         </p>
       </div>
 
-      <div>
-        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
-          Example
-        </h2>
-        <PieChartDemo />
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Code</CardTitle>
-          <CardDescription>Full implementation example</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CodeBlock code={exampleCode} language="typescript" />
-        </CardContent>
-      </Card>
+      <PieChartDemoWrapper code={exampleCode} />
     </>
   );
 }
