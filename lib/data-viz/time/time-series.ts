@@ -1,16 +1,18 @@
-import type { TimeSeriesDataPoint, ChartData } from '../core/types';
-import { parseDate } from './date-utils';
-import { normalizeTimezone } from './timezone';
-import { DEFAULT_TIMEZONE } from '../core/constants';
-import { binByTime } from '../data/aggregators';
+import { DEFAULT_TIMEZONE } from "../core/constants";
+import type { ChartData, TimeSeriesDataPoint } from "../core/types";
+import { binByTime } from "../data/aggregators";
+import { parseDate } from "./date-utils";
+import { normalizeTimezone } from "./timezone";
 
 export function alignTimeSeries(
   series: TimeSeriesDataPoint[],
   targetTimezone: string = DEFAULT_TIMEZONE
 ): TimeSeriesDataPoint[] {
-  return series.map(point => {
+  return series.map((point) => {
     const timestamp = parseDate(point.timestamp);
-    if (!timestamp) return point;
+    if (!timestamp) {
+      return point;
+    }
 
     const normalized = normalizeTimezone(
       timestamp,
@@ -26,17 +28,48 @@ export function alignTimeSeries(
   });
 }
 
+function createGapPoint(
+  current: TimeSeriesDataPoint,
+  gapTime: Date,
+  timezone: string,
+  fillValue: number | null
+): TimeSeriesDataPoint {
+  const gapPoint: TimeSeriesDataPoint = {
+    timestamp: gapTime,
+    timezone,
+  };
+
+  for (const key in current) {
+    if (!Object.hasOwn(current, key)) {
+      continue;
+    }
+    if (key !== "timestamp" && key !== "timezone") {
+      if (typeof current[key] === "number") {
+        gapPoint[key] = fillValue;
+      } else {
+        gapPoint[key] = current[key];
+      }
+    }
+  }
+
+  return gapPoint;
+}
+
 export function fillTimeSeriesGaps(
   series: TimeSeriesDataPoint[],
-  granularity: 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year',
+  granularity: "hour" | "day" | "week" | "month" | "quarter" | "year",
   fillValue: number | null = null
 ): TimeSeriesDataPoint[] {
-  if (series.length === 0) return series;
+  if (series.length === 0) {
+    return series;
+  }
 
   const sorted = [...series].sort((a, b) => {
     const aTime = parseDate(a.timestamp);
     const bTime = parseDate(b.timestamp);
-    if (!aTime || !bTime) return 0;
+    if (!(aTime && bTime)) {
+      return 0;
+    }
     return aTime.getTime() - bTime.getTime();
   });
 
@@ -49,7 +82,7 @@ export function fillTimeSeriesGaps(
 
     const currentTime = parseDate(current.timestamp);
     const nextTime = parseDate(next.timestamp);
-    if (!currentTime || !nextTime) {
+    if (!(currentTime && nextTime)) {
       filled.push(current);
       continue;
     }
@@ -60,49 +93,46 @@ export function fillTimeSeriesGaps(
     if (gap > 1) {
       for (let j = 1; j < gap; j++) {
         const gapTime = addTimeGranularity(currentTime, granularity, j);
-        const gapPoint: TimeSeriesDataPoint = {
-          timestamp: gapTime,
-          timezone,
-        };
-
-        for (const key in current) {
-          if (key !== 'timestamp' && key !== 'timezone') {
-            if (typeof current[key] === 'number') {
-              gapPoint[key] = fillValue;
-            } else {
-              gapPoint[key] = current[key];
-            }
-          }
-        }
-
+        const gapPoint = createGapPoint(current, gapTime, timezone, fillValue);
         filled.push(gapPoint);
       }
     }
   }
 
-  filled.push(sorted[sorted.length - 1]);
+  filled.push(sorted.at(-1));
   return filled;
 }
 
 function calculateTimeGap(
   start: Date,
   end: Date,
-  granularity: 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year'
+  granularity: "hour" | "day" | "week" | "month" | "quarter" | "year"
 ): number {
   switch (granularity) {
-    case 'hour':
+    case "hour":
       return Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60));
-    case 'day':
-      return Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    case 'week':
-      return Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 7));
-    case 'month':
-      return (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-    case 'quarter':
+    case "day":
+      return Math.floor(
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+      );
+    case "week":
+      return Math.floor(
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 7)
+      );
+    case "month":
+      return (
+        (end.getFullYear() - start.getFullYear()) * 12 +
+        (end.getMonth() - start.getMonth())
+      );
+    case "quarter": {
       const startQuarter = Math.floor(start.getMonth() / 3);
       const endQuarter = Math.floor(end.getMonth() / 3);
-      return (end.getFullYear() - start.getFullYear()) * 4 + (endQuarter - startQuarter);
-    case 'year':
+      return (
+        (end.getFullYear() - start.getFullYear()) * 4 +
+        (endQuarter - startQuarter)
+      );
+    }
+    case "year":
       return end.getFullYear() - start.getFullYear();
     default:
       return 0;
@@ -111,41 +141,46 @@ function calculateTimeGap(
 
 function addTimeGranularity(
   date: Date,
-  granularity: 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year',
+  granularity: "hour" | "day" | "week" | "month" | "quarter" | "year",
   amount: number
 ): Date {
   const result = new Date(date);
   switch (granularity) {
-    case 'hour':
+    case "hour":
       result.setHours(result.getHours() + amount);
       break;
-    case 'day':
+    case "day":
       result.setDate(result.getDate() + amount);
       break;
-    case 'week':
+    case "week":
       result.setDate(result.getDate() + amount * 7);
       break;
-    case 'month':
+    case "month":
       result.setMonth(result.getMonth() + amount);
       break;
-    case 'quarter':
+    case "quarter":
       result.setMonth(result.getMonth() + amount * 3);
       break;
-    case 'year':
+    case "year":
       result.setFullYear(result.getFullYear() + amount);
       break;
+    default:
+      throw new Error(`Unknown granularity: ${granularity}`);
   }
   return result;
 }
 
 export function resampleTimeSeries(
   series: TimeSeriesDataPoint[],
-  granularity: 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year'
+  granularity: "hour" | "day" | "week" | "month" | "quarter" | "year"
 ): ChartData {
   return binByTime(series, granularity);
 }
 
-export function extractTimeRange(series: TimeSeriesDataPoint[]): { start: Date | null; end: Date | null } {
+export function extractTimeRange(series: TimeSeriesDataPoint[]): {
+  start: Date | null;
+  end: Date | null;
+} {
   if (series.length === 0) {
     return { start: null, end: null };
   }
@@ -155,7 +190,9 @@ export function extractTimeRange(series: TimeSeriesDataPoint[]): { start: Date |
 
   for (const point of series) {
     const timestamp = parseDate(point.timestamp);
-    if (!timestamp) continue;
+    if (!timestamp) {
+      continue;
+    }
 
     if (!start || timestamp < start) {
       start = timestamp;
@@ -173,9 +210,11 @@ export function filterTimeRange(
   start: Date,
   end: Date
 ): TimeSeriesDataPoint[] {
-  return series.filter(point => {
+  return series.filter((point) => {
     const timestamp = parseDate(point.timestamp);
-    if (!timestamp) return false;
+    if (!timestamp) {
+      return false;
+    }
     return timestamp >= start && timestamp <= end;
   });
 }

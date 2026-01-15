@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import type { ChartData, PieChartConfig } from '../../core/types';
-import { validateChartData } from '../../data/formats';
-import { DEFAULT_COLORS } from '../../core/constants';
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart as RechartsPieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
+import { DEFAULT_COLORS } from "../../core/constants";
+import type { ChartData, PieChartConfig } from "../../core/types";
+import { validateChartData } from "../../data/formats";
 
 export interface PieChartProps {
   data: ChartData;
@@ -13,7 +19,7 @@ export interface PieChartProps {
 }
 
 export function PieChart({ data, config, className }: PieChartProps) {
-  if (!validateChartData(data, 'pie')) {
+  if (!validateChartData(data, "pie")) {
     return (
       <div className={className}>
         <p>Invalid data for pie chart</p>
@@ -32,19 +38,19 @@ export function PieChart({ data, config, className }: PieChartProps) {
   const colors = config.colors || DEFAULT_COLORS;
 
   return (
-    <ResponsiveContainer width="100%" height="100%" className={className}>
+    <ResponsiveContainer className={className} height="100%" width="100%">
       <RechartsPieChart>
         <Pie
-          data={data.data}
-          dataKey={config.dataKey}
-          nameKey={config.nameKey}
           cx="50%"
           cy="50%"
-          outerRadius={80}
+          data={data.data}
+          dataKey={config.dataKey}
           label
+          nameKey={config.nameKey}
+          outerRadius={80}
         >
-          {data.data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+          {data.data.map((_entry, index) => (
+            <Cell fill={colors[index % colors.length]} key={`cell-${index}`} />
           ))}
         </Pie>
         <Tooltip />

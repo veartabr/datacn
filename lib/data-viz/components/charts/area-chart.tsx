@@ -1,11 +1,18 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { AreaChart as RechartsAreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
-import type { ChartData, AreaChartConfig } from '../../core/types';
-import { validateChartData } from '../../data/formats';
-import { DEFAULT_COLORS, DEFAULT_CURVE } from '../../core/constants';
-import { parseDate } from '../../time/date-utils';
+import {
+  Area,
+  CartesianGrid,
+  Legend,
+  AreaChart as RechartsAreaChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { DEFAULT_COLORS, DEFAULT_CURVE } from "../../core/constants";
+import type { AreaChartConfig, ChartData } from "../../core/types";
+import { validateChartData } from "../../data/formats";
+import { parseDate } from "../../time/date-utils";
 
 export interface AreaChartProps {
   data: ChartData;
@@ -14,8 +21,13 @@ export interface AreaChartProps {
   className?: string;
 }
 
-export function AreaChart({ data, config, timezone, className }: AreaChartProps) {
-  if (!validateChartData(data, 'area')) {
+export function AreaChart({
+  data,
+  config,
+  timezone,
+  className,
+}: AreaChartProps) {
+  if (!validateChartData(data, "area")) {
     return (
       <div className={className}>
         <p>Invalid data for area chart</p>
@@ -35,36 +47,39 @@ export function AreaChart({ data, config, timezone, className }: AreaChartProps)
   const curve = config.curve || DEFAULT_CURVE;
 
   return (
-    <ResponsiveContainer width="100%" height="100%" className={className}>
+    <ResponsiveContainer className={className} height="100%" width="100%">
       <RechartsAreaChart
-        data={data.data}
         accessibilityLayer
+        data={data.data}
         margin={{ top: 10, right: 10 }}
-        stackOffset={config.stacked ? 'expand' : undefined}>
+        stackOffset={config.stacked ? "expand" : undefined}
+      >
         <CartesianGrid strokeDasharray="2 2" />
         <XAxis
           dataKey={config.xKey}
-          type={data.metadata.types[config.xKey] === 'date' ? 'number' : 'category'}
           scale="time"
           tickFormatter={(value) => {
-            if (data.metadata.types[config.xKey] === 'date') {
+            if (data.metadata.types[config.xKey] === "date") {
               const date = parseDate(value);
               return date ? date.toLocaleDateString() : String(value);
             }
             return String(value);
           }}
+          type={
+            data.metadata.types[config.xKey] === "date" ? "number" : "category"
+          }
         />
         <YAxis />
         <Legend />
         {config.yKeys.map((key, index) => (
           <Area
-            key={key}
-            type={curve}
             dataKey={key}
-            stackId={config.stacked ? '1' : undefined}
-            stroke={colors[index % colors.length]}
             fill={colors[index % colors.length]}
             fillOpacity={0.6}
+            key={key}
+            stackId={config.stacked ? "1" : undefined}
+            stroke={colors[index % colors.length]}
+            type={curve}
           />
         ))}
       </RechartsAreaChart>

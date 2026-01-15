@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
-import type { ChartData, BarChartConfig } from '../../core/types';
-import { validateChartData } from '../../data/formats';
-import { DEFAULT_COLORS, DEFAULT_STROKE_WIDTH } from '../../core/constants';
+import {
+  Bar,
+  CartesianGrid,
+  BarChart as RechartsBarChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { DEFAULT_COLORS } from "../../core/constants";
+import type { BarChartConfig, ChartData } from "../../core/types";
+import { validateChartData } from "../../data/formats";
 
 export interface BarChartProps {
   data: ChartData;
@@ -14,7 +20,7 @@ export interface BarChartProps {
 }
 
 export function BarChart({ data, config, timezone, className }: BarChartProps) {
-  if (!validateChartData(data, 'bar')) {
+  if (!validateChartData(data, "bar")) {
     return (
       <div className={className}>
         <p>Invalid data for bar chart</p>
@@ -34,16 +40,19 @@ export function BarChart({ data, config, timezone, className }: BarChartProps) {
   const color = config.color || colors[0];
 
   return (
-    <ResponsiveContainer width="100%" height="100%" className={className}>
-      <RechartsBarChart data={data.data} layout={config.horizontal ? 'vertical' : 'horizontal'}>
+    <ResponsiveContainer className={className} height="100%" width="100%">
+      <RechartsBarChart
+        data={data.data}
+        layout={config.horizontal ? "vertical" : "horizontal"}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey={config.horizontal ? config.yKey : config.xKey}
-          type={config.horizontal ? 'number' : 'category'}
+          type={config.horizontal ? "number" : "category"}
         />
         <YAxis
           dataKey={config.horizontal ? config.xKey : config.yKey}
-          type={config.horizontal ? 'category' : 'number'}
+          type={config.horizontal ? "category" : "number"}
         />
         <Bar
           dataKey={config.horizontal ? config.xKey : config.yKey}

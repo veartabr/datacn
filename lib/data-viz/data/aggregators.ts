@@ -1,8 +1,56 @@
-import type { ChartData, AggregationConfig, DataPoint, TimeSeriesDataPoint } from '../core/types';
-import { parseDate } from '../time/date-utils';
-import { startOfHour, startOfDay, startOfWeek, startOfMonth, startOfQuarter, startOfYear } from 'date-fns';
+import {
+  startOfDay,
+  startOfHour,
+  startOfMonth,
+  startOfQuarter,
+  startOfWeek,
+  startOfYear,
+} from "date-fns";
+import type {
+  AggregationConfig,
+  ChartData,
+  DataPoint,
+  TimeSeriesDataPoint,
+} from "../core/types";
+import { parseDate } from "../time/date-utils";
 
-export function aggregate(data: ChartData, config: AggregationConfig): ChartData {
+function calculateOperation(
+  values: number[],
+  operation: AggregationConfig["operation"]
+): number {
+  switch (operation) {
+    case "sum":
+      return values.reduce((a, b) => a + b, 0);
+    case "avg":
+      return values.length > 0
+        ? values.reduce((a, b) => a + b, 0) / values.length
+        : 0;
+    case "count":
+      return values.length;
+    case "min":
+      return values.length > 0 ? Math.min(...values) : 0;
+    case "max":
+      return values.length > 0 ? Math.max(...values) : 0;
+    case "median": {
+      const sorted = [...values].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      if (sorted.length === 0) {
+        return 0;
+      }
+      if (sorted.length % 2 === 0) {
+        return (sorted[mid - 1] + sorted[mid]) / 2;
+      }
+      return sorted[mid];
+    }
+    default:
+      throw new Error(`Unknown operation: ${operation}`);
+  }
+}
+
+export function aggregate(
+  data: ChartData,
+  config: AggregationConfig
+): ChartData {
   if (data.data.length === 0) {
     return data;
   }
@@ -14,54 +62,39 @@ export function aggregate(data: ChartData, config: AggregationConfig): ChartData
   }
 
   if (timeGranularity && groupBy) {
-    return aggregateByTimeAndGroup(data, field, operation, groupBy, timeGranularity);
-  } else if (timeGranularity) {
-    return aggregateByTime(data, field, operation, timeGranularity);
-  } else if (groupBy) {
-    return aggregateByGroup(data, field, operation, groupBy);
-  } else {
-    return aggregateAll(data, field, operation);
+    return aggregateByTimeAndGroup(
+      data,
+      field,
+      operation,
+      groupBy,
+      timeGranularity
+    );
   }
+  if (timeGranularity) {
+    return aggregateByTime(data, field, operation, timeGranularity);
+  }
+  if (groupBy) {
+    return aggregateByGroup(data, field, operation, groupBy);
+  }
+  return aggregateAll(data, field, operation);
 }
 
-function aggregateAll(data: ChartData, field: string, operation: AggregationConfig['operation']): ChartData {
+function aggregateAll(
+  data: ChartData,
+  field: string,
+  operation: AggregationConfig["operation"]
+): ChartData {
   const values = data.data
-    .map(point => point[field])
-    .filter((v): v is number => typeof v === 'number');
+    .map((point) => point[field])
+    .filter((v): v is number => typeof v === "number");
 
-  let result: number;
-  switch (operation) {
-    case 'sum':
-      result = values.reduce((a, b) => a + b, 0);
-      break;
-    case 'avg':
-      result = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-      break;
-    case 'count':
-      result = values.length;
-      break;
-    case 'min':
-      result = values.length > 0 ? Math.min(...values) : 0;
-      break;
-    case 'max':
-      result = values.length > 0 ? Math.max(...values) : 0;
-      break;
-    case 'median':
-      const sorted = [...values].sort((a, b) => a - b);
-      const mid = Math.floor(sorted.length / 2);
-      result = sorted.length > 0 
-        ? sorted.length % 2 === 0 
-          ? (sorted[mid - 1] + sorted[mid]) / 2 
-          : sorted[mid]
-        : 0;
-      break;
-  }
+  const result = calculateOperation(values, operation);
 
   return {
     data: [{ [field]: result }],
     metadata: {
       columns: [field],
-      types: { [field]: 'number' },
+      types: { [field]: "number" },
     },
   };
 }
@@ -69,17 +102,17 @@ function aggregateAll(data: ChartData, field: string, operation: AggregationConf
 function aggregateByGroup(
   data: ChartData,
   field: string,
-  operation: AggregationConfig['operation'],
+  operation: AggregationConfig["operation"],
   groupBy: string[]
 ): ChartData {
   const groups = new Map<string, DataPoint[]>();
 
   for (const point of data.data) {
-    const key = groupBy.map(g => String(point[g] || '')).join('|');
+    const key = groupBy.map((g) => String(point[g] || "")).join("|");
     if (!groups.has(key)) {
       groups.set(key, []);
     }
-    groups.get(key)!.push(point);
+    groups.get(key)?.push(point);
   }
 
   const aggregated: DataPoint[] = [];
@@ -88,51 +121,25 @@ function aggregateByGroup(
 
   for (const [key, points] of groups) {
     const values = points
-      .map(p => p[field])
-      .filter((v): v is number => typeof v === 'number');
+      .map((p) => p[field])
+      .filter((v): v is number => typeof v === "number");
 
-    let result: number;
-    switch (operation) {
-      case 'sum':
-        result = values.reduce((a, b) => a + b, 0);
-        break;
-      case 'avg':
-        result = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-        break;
-      case 'count':
-        result = values.length;
-        break;
-      case 'min':
-        result = values.length > 0 ? Math.min(...values) : 0;
-        break;
-      case 'max':
-        result = values.length > 0 ? Math.max(...values) : 0;
-        break;
-      case 'median':
-        const sorted = [...values].sort((a, b) => a - b);
-        const mid = Math.floor(sorted.length / 2);
-        result = sorted.length > 0 
-          ? sorted.length % 2 === 0 
-            ? (sorted[mid - 1] + sorted[mid]) / 2 
-            : sorted[mid]
-          : 0;
-        break;
-    }
+    const result = calculateOperation(values, operation);
 
-    const groupValues = key.split('|');
+    const groupValues = key.split("|");
     const aggregatedPoint: DataPoint = {};
-    groupBy.forEach((g, i) => {
-      aggregatedPoint[g] = groupValues[i];
-    });
+    for (let i = 0; i < groupBy.length; i++) {
+      aggregatedPoint[groupBy[i]] = groupValues[i];
+    }
     aggregatedPoint[field] = result;
     aggregated.push(aggregatedPoint);
   }
 
-  const types: Record<string, 'string' | 'number' | 'date' | 'boolean'> = {};
-  groupBy.forEach(g => {
-    types[g] = data.metadata.types[g] || 'string';
-  });
-  types[field] = 'number';
+  const types: Record<string, "string" | "number" | "date" | "boolean"> = {};
+  for (const g of groupBy) {
+    types[g] = data.metadata.types[g] || "string";
+  }
+  types[field] = "number";
 
   return {
     data: aggregated,
@@ -146,78 +153,56 @@ function aggregateByGroup(
 function aggregateByTime(
   data: ChartData,
   field: string,
-  operation: AggregationConfig['operation'],
-  granularity: NonNullable<AggregationConfig['timeGranularity']>
+  operation: AggregationConfig["operation"],
+  granularity: NonNullable<AggregationConfig["timeGranularity"]>
 ): ChartData {
   const timeGroups = new Map<string, DataPoint[]>();
 
   for (const point of data.data) {
     const timestamp = parseDate(point.timestamp || point.date || point.time);
-    if (!timestamp) continue;
+    if (!timestamp) {
+      continue;
+    }
 
     let timeKey: Date;
     switch (granularity) {
-      case 'hour':
+      case "hour":
         timeKey = startOfHour(timestamp);
         break;
-      case 'day':
+      case "day":
         timeKey = startOfDay(timestamp);
         break;
-      case 'week':
+      case "week":
         timeKey = startOfWeek(timestamp);
         break;
-      case 'month':
+      case "month":
         timeKey = startOfMonth(timestamp);
         break;
-      case 'quarter':
+      case "quarter":
         timeKey = startOfQuarter(timestamp);
         break;
-      case 'year':
+      case "year":
         timeKey = startOfYear(timestamp);
         break;
+      default:
+        throw new Error(`Unknown granularity: ${granularity}`);
     }
 
     const key = timeKey.toISOString();
     if (!timeGroups.has(key)) {
       timeGroups.set(key, []);
     }
-    timeGroups.get(key)!.push(point);
+    timeGroups.get(key)?.push(point);
   }
 
   const aggregated: DataPoint[] = [];
 
   for (const [key, points] of timeGroups) {
     const values = points
-      .map(p => p[field])
-      .filter((v): v is number => typeof v === 'number');
+      .map((p) => p[field])
+      .filter((v): v is number => typeof v === "number");
 
-    let result: number;
-    switch (operation) {
-      case 'sum':
-        result = values.reduce((a, b) => a + b, 0);
-        break;
-      case 'avg':
-        result = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-        break;
-      case 'count':
-        result = values.length;
-        break;
-      case 'min':
-        result = values.length > 0 ? Math.min(...values) : 0;
-        break;
-      case 'max':
-        result = values.length > 0 ? Math.max(...values) : 0;
-        break;
-      case 'median':
-        const sorted = [...values].sort((a, b) => a - b);
-        const mid = Math.floor(sorted.length / 2);
-        result = sorted.length > 0 
-          ? sorted.length % 2 === 0 
-            ? (sorted[mid - 1] + sorted[mid]) / 2 
-            : sorted[mid]
-          : 0;
-        break;
-    }
+    const result = calculateOperation(values, operation);
 
     aggregated.push({
       timestamp: new Date(key),
@@ -228,17 +213,19 @@ function aggregateByTime(
   aggregated.sort((a, b) => {
     const aTime = parseDate(a.timestamp);
     const bTime = parseDate(b.timestamp);
-    if (!aTime || !bTime) return 0;
+    if (!(aTime && bTime)) {
+      return 0;
+    }
     return aTime.getTime() - bTime.getTime();
   });
 
   return {
     data: aggregated,
     metadata: {
-      columns: ['timestamp', field],
+      columns: ["timestamp", field],
       types: {
-        timestamp: 'date',
-        [field]: 'number',
+        timestamp: "date",
+        [field]: "number",
       },
     },
   };
@@ -247,108 +234,88 @@ function aggregateByTime(
 function aggregateByTimeAndGroup(
   data: ChartData,
   field: string,
-  operation: AggregationConfig['operation'],
+  operation: AggregationConfig["operation"],
   groupBy: string[],
-  granularity: NonNullable<AggregationConfig['timeGranularity']>
+  granularity: NonNullable<AggregationConfig["timeGranularity"]>
 ): ChartData {
   const groups = new Map<string, DataPoint[]>();
 
   for (const point of data.data) {
     const timestamp = parseDate(point.timestamp || point.date || point.time);
-    if (!timestamp) continue;
+    if (!timestamp) {
+      continue;
+    }
 
     let timeKey: Date;
     switch (granularity) {
-      case 'hour':
+      case "hour":
         timeKey = startOfHour(timestamp);
         break;
-      case 'day':
+      case "day":
         timeKey = startOfDay(timestamp);
         break;
-      case 'week':
+      case "week":
         timeKey = startOfWeek(timestamp);
         break;
-      case 'month':
+      case "month":
         timeKey = startOfMonth(timestamp);
         break;
-      case 'quarter':
+      case "quarter":
         timeKey = startOfQuarter(timestamp);
         break;
-      case 'year':
+      case "year":
         timeKey = startOfYear(timestamp);
         break;
+      default:
+        throw new Error(`Unknown granularity: ${granularity}`);
     }
 
-    const groupKey = groupBy.map(g => String(point[g] || '')).join('|');
+    const groupKey = groupBy.map((g) => String(point[g] || "")).join("|");
     const key = `${timeKey.toISOString()}|${groupKey}`;
 
     if (!groups.has(key)) {
       groups.set(key, []);
     }
-    groups.get(key)!.push(point);
+    groups.get(key)?.push(point);
   }
 
   const aggregated: DataPoint[] = [];
 
   for (const [key, points] of groups) {
-    const [timeKey, ...groupValues] = key.split('|');
+    const [timeKey, ...groupValues] = key.split("|");
     const values = points
-      .map(p => p[field])
-      .filter((v): v is number => typeof v === 'number');
+      .map((p) => p[field])
+      .filter((v): v is number => typeof v === "number");
 
-    let result: number;
-    switch (operation) {
-      case 'sum':
-        result = values.reduce((a, b) => a + b, 0);
-        break;
-      case 'avg':
-        result = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-        break;
-      case 'count':
-        result = values.length;
-        break;
-      case 'min':
-        result = values.length > 0 ? Math.min(...values) : 0;
-        break;
-      case 'max':
-        result = values.length > 0 ? Math.max(...values) : 0;
-        break;
-      case 'median':
-        const sorted = [...values].sort((a, b) => a - b);
-        const mid = Math.floor(sorted.length / 2);
-        result = sorted.length > 0 
-          ? sorted.length % 2 === 0 
-            ? (sorted[mid - 1] + sorted[mid]) / 2 
-            : sorted[mid]
-          : 0;
-        break;
-    }
+    const result = calculateOperation(values, operation);
 
     const aggregatedPoint: DataPoint = {
       timestamp: new Date(timeKey),
       [field]: result,
     };
-    groupBy.forEach((g, i) => {
-      aggregatedPoint[g] = groupValues[i];
-    });
+    for (let i = 0; i < groupBy.length; i++) {
+      aggregatedPoint[groupBy[i]] = groupValues[i];
+    }
     aggregated.push(aggregatedPoint);
   }
 
   aggregated.sort((a, b) => {
     const aTime = parseDate(a.timestamp);
     const bTime = parseDate(b.timestamp);
-    if (!aTime || !bTime) return 0;
+    if (!(aTime && bTime)) {
+      return 0;
+    }
     return aTime.getTime() - bTime.getTime();
   });
 
-  const columns = ['timestamp', ...groupBy, field];
-  const types: Record<string, 'string' | 'number' | 'date' | 'boolean'> = {
-    timestamp: 'date',
-    [field]: 'number',
+  const columns = ["timestamp", ...groupBy, field];
+  const types: Record<string, "string" | "number" | "date" | "boolean"> = {
+    timestamp: "date",
+    [field]: "number",
   };
-  groupBy.forEach(g => {
-    types[g] = data.metadata.types[g] || 'string';
-  });
+  for (const g of groupBy) {
+    types[g] = data.metadata.types[g] || "string";
+  }
 
   return {
     data: aggregated,
@@ -359,15 +326,18 @@ function aggregateByTimeAndGroup(
   };
 }
 
-export function groupBy(data: ChartData, fields: string[]): Map<string, ChartData> {
+export function groupBy(
+  data: ChartData,
+  fields: string[]
+): Map<string, ChartData> {
   const groups = new Map<string, DataPoint[]>();
 
   for (const point of data.data) {
-    const key = fields.map(f => String(point[f] || '')).join('|');
+    const key = fields.map((f) => String(point[f] || "")).join("|");
     if (!groups.has(key)) {
       groups.set(key, []);
     }
-    groups.get(key)!.push(point);
+    groups.get(key)?.push(point);
   }
 
   const result = new Map<string, ChartData>();
@@ -383,41 +353,45 @@ export function groupBy(data: ChartData, fields: string[]): Map<string, ChartDat
 
 export function binByTime(
   data: TimeSeriesDataPoint[],
-  granularity: 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year'
+  granularity: "hour" | "day" | "week" | "month" | "quarter" | "year"
 ): ChartData {
   const bins = new Map<string, TimeSeriesDataPoint[]>();
 
   for (const point of data) {
     const timestamp = parseDate(point.timestamp);
-    if (!timestamp) continue;
+    if (!timestamp) {
+      continue;
+    }
 
     let binKey: Date;
     switch (granularity) {
-      case 'hour':
+      case "hour":
         binKey = startOfHour(timestamp);
         break;
-      case 'day':
+      case "day":
         binKey = startOfDay(timestamp);
         break;
-      case 'week':
+      case "week":
         binKey = startOfWeek(timestamp);
         break;
-      case 'month':
+      case "month":
         binKey = startOfMonth(timestamp);
         break;
-      case 'quarter':
+      case "quarter":
         binKey = startOfQuarter(timestamp);
         break;
-      case 'year':
+      case "year":
         binKey = startOfYear(timestamp);
         break;
+      default:
+        throw new Error(`Unknown granularity: ${granularity}`);
     }
 
     const key = binKey.toISOString();
     if (!bins.has(key)) {
       bins.set(key, []);
     }
-    bins.get(key)!.push(point);
+    bins.get(key)?.push(point);
   }
 
   const binned: DataPoint[] = [];
@@ -429,8 +403,10 @@ export function binByTime(
     const numericFields = new Set<string>();
     for (const point of points) {
       for (const field in point) {
-        if (field === 'timestamp' || field === 'timezone') continue;
-        if (typeof point[field] === 'number') {
+        if (field === "timestamp" || field === "timezone") {
+          continue;
+        }
+        if (typeof point[field] === "number") {
           numericFields.add(field);
         }
       }
@@ -438,8 +414,8 @@ export function binByTime(
 
     for (const field of numericFields) {
       const values = points
-        .map(p => p[field])
-        .filter((v): v is number => typeof v === 'number');
+        .map((p) => p[field])
+        .filter((v): v is number => typeof v === "number");
       aggregated[field] = values.reduce((a, b) => a + b, 0) / values.length;
     }
 
@@ -449,17 +425,19 @@ export function binByTime(
   binned.sort((a, b) => {
     const aTime = parseDate(a.timestamp);
     const bTime = parseDate(b.timestamp);
-    if (!aTime || !bTime) return 0;
+    if (!(aTime && bTime)) {
+      return 0;
+    }
     return aTime.getTime() - bTime.getTime();
   });
 
   const columns = binned.length > 0 ? Object.keys(binned[0]) : [];
-  const types: Record<string, 'string' | 'number' | 'date' | 'boolean'> = {
-    timestamp: 'date',
+  const types: Record<string, "string" | "number" | "date" | "boolean"> = {
+    timestamp: "date",
   };
   for (const col of columns) {
-    if (col !== 'timestamp') {
-      types[col] = 'number';
+    if (col !== "timestamp") {
+      types[col] = "number";
     }
   }
 

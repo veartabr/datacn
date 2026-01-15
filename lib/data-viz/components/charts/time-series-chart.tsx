@@ -1,11 +1,23 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import type { TimeSeriesDataPoint, TimeSeriesConfig } from '../../core/types';
-import { resampleTimeSeries } from '../../time/time-series';
-import { DEFAULT_COLORS, DEFAULT_STROKE_WIDTH, DEFAULT_CURVE } from '../../core/constants';
-import { parseDate } from '../../time/date-utils';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart as RechartsLineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
+  DEFAULT_COLORS,
+  DEFAULT_CURVE,
+  DEFAULT_STROKE_WIDTH,
+} from "../../core/constants";
+import type { TimeSeriesConfig, TimeSeriesDataPoint } from "../../core/types";
+import { parseDate } from "../../time/date-utils";
+import { resampleTimeSeries } from "../../time/time-series";
 
 export interface TimeSeriesChartProps {
   data: TimeSeriesDataPoint[];
@@ -13,7 +25,11 @@ export interface TimeSeriesChartProps {
   className?: string;
 }
 
-export function TimeSeriesChart({ data, config, className }: TimeSeriesChartProps) {
+export function TimeSeriesChart({
+  data,
+  config,
+  className,
+}: TimeSeriesChartProps) {
   if (data.length === 0) {
     return (
       <div className={className}>
@@ -22,25 +38,25 @@ export function TimeSeriesChart({ data, config, className }: TimeSeriesChartProp
     );
   }
 
-  const granularity = config.granularity || 'day';
+  const granularity = config.granularity || "day";
   const chartData = resampleTimeSeries(data, granularity);
   const colors = config.colors || DEFAULT_COLORS;
   const strokeWidth = DEFAULT_STROKE_WIDTH;
   const curve = DEFAULT_CURVE;
 
   return (
-    <ResponsiveContainer width="100%" height="100%" className={className}>
+    <ResponsiveContainer className={className} height="100%" width="100%">
       <RechartsLineChart data={chartData.data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey="timestamp"
-          type="number"
+          domain={["dataMin", "dataMax"]}
           scale="time"
-          domain={['dataMin', 'dataMax']}
           tickFormatter={(value) => {
             const date = parseDate(value);
             return date ? date.toLocaleDateString() : String(value);
           }}
+          type="number"
         />
         <YAxis />
         <Tooltip
@@ -52,13 +68,13 @@ export function TimeSeriesChart({ data, config, className }: TimeSeriesChartProp
         <Legend />
         {config.yKeys.map((key, index) => (
           <Line
-            key={key}
-            type={curve}
+            activeDot={{ r: 6 }}
             dataKey={key}
+            dot={config.showMarkers ? { r: 4 } : false}
+            key={key}
             stroke={colors[index % colors.length]}
             strokeWidth={strokeWidth}
-            dot={config.showMarkers ? { r: 4 } : false}
-            activeDot={{ r: 6 }}
+            type={curve}
           />
         ))}
       </RechartsLineChart>

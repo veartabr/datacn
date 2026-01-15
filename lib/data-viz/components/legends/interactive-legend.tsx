@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback } from 'react';
-import { ChartLegend, LegendItem } from './chart-legend';
+import { useCallback, useState } from "react";
+import { ChartLegend, type LegendItem } from "./chart-legend";
 
 export interface InteractiveLegendProps {
   items: LegendItem[];
   onToggle?: (label: string, visible: boolean) => void;
   onItemClick?: (label: string) => void;
   className?: string;
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
 }
 
 export function InteractiveLegend({
@@ -16,10 +16,10 @@ export function InteractiveLegend({
   onToggle,
   onItemClick,
   className,
-  orientation = 'horizontal',
+  orientation = "horizontal",
 }: InteractiveLegendProps) {
   const [visibleItems, setVisibleItems] = useState<Set<string>>(
-    new Set(items.map(item => item.label))
+    new Set(items.map((item) => item.label))
   );
 
   const handleToggle = useCallback(
@@ -43,18 +43,18 @@ export function InteractiveLegend({
     [onItemClick]
   );
 
-  const visibleItemsList = items.filter(item => visibleItems.has(item.label));
+  const visibleItemsList = items.filter((item) => visibleItems.has(item.label));
 
   return (
     <div className={className}>
       <ChartLegend items={visibleItemsList} orientation={orientation} />
       <div
         style={{
-          display: 'flex',
-          flexDirection: orientation === 'vertical' ? 'column' : 'row',
-          gap: '0.5rem',
-          marginTop: '0.5rem',
-          flexWrap: 'wrap',
+          display: "flex",
+          flexDirection: orientation === "vertical" ? "column" : "row",
+          gap: "0.5rem",
+          marginTop: "0.5rem",
+          flexWrap: "wrap",
         }}
       >
         {items.map((item) => {
@@ -67,23 +67,23 @@ export function InteractiveLegend({
                 handleClick(item.label);
               }}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.25rem 0.5rem',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                backgroundColor: isVisible ? '#fff' : '#f0f0f0',
-                cursor: 'pointer',
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.25rem 0.5rem",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                backgroundColor: isVisible ? "#fff" : "#f0f0f0",
+                cursor: "pointer",
                 opacity: isVisible ? 1 : 0.5,
               }}
             >
               <div
                 style={{
-                  width: '12px',
-                  height: '12px',
+                  width: "12px",
+                  height: "12px",
                   backgroundColor: item.color,
-                  borderRadius: '2px',
+                  borderRadius: "2px",
                 }}
               />
               <span>{item.label}</span>

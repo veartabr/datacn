@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ChartDemo } from '@/components/chart-demo';
-import { AreaChart } from '@/lib/data-viz/components/charts/area-chart';
-import { useChartData } from '@/lib/data-viz/hooks/use-chart-data';
-import { areaChartData } from '@/app/examples/data';
+import { areaChartData } from "@/app/examples/data";
+import { ChartDemo } from "@/components/chart-demo";
+import { AreaChart } from "@/lib/data-viz/components/charts/area-chart";
+import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
 
 export function AreaChartDemo() {
   const { data } = useChartData(areaChartData.data);
@@ -12,12 +12,16 @@ export function AreaChartDemo() {
     <ChartDemo
       chart={
         <AreaChart
+          config={{
+            xKey: "month",
+            yKeys: ["sales", "expenses"],
+            stacked: true,
+          }}
           data={data}
-          config={{ xKey: 'month', yKeys: ['sales', 'expenses'], stacked: true }}
         />
       }
+      config={{ xKey: "month", yKeys: ["sales", "expenses"], stacked: true }}
       data={areaChartData.data}
-      config={{ xKey: 'month', yKeys: ['sales', 'expenses'], stacked: true }}
     />
   );
 }

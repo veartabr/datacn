@@ -1,18 +1,27 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CodeBlock } from '@/components/code-block';
-import { ChartDemo } from '@/components/chart-demo';
-import { BarChartDemo } from '@/components/bar-chart-demo';
-import { createPageMetadata } from '@/app/metadata';
-import { createBreadcrumbListSchema, createArticleSchema } from '@/lib/seo/structured-data';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { createPageMetadata } from "@/app/metadata";
+import { BarChartDemo } from "@/components/bar-chart-demo";
+import { CodeBlock } from "@/components/code-block";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { JsonLdScript } from "@/lib/seo/json-ld-script";
+import {
+  createArticleSchema,
+  createBreadcrumbListSchema,
+} from "@/lib/seo/structured-data";
 
 export const metadata: Metadata = createPageMetadata(
-  'Bar Chart',
-  'Create beautiful bar charts with datacn. Supports horizontal and vertical orientations, stacking, and custom colors.',
-  '/components/bar-chart'
+  "Bar Chart",
+  "Create beautiful bar charts with datacn. Supports horizontal and vertical orientations, stacking, and custom colors.",
+  "/components/bar-chart"
 );
 
 const importCode = `import { BarChart } from '@/lib/data-viz';`;
@@ -63,40 +72,34 @@ interface BarChartConfig {
 
 export default function BarChartPage() {
   const breadcrumbSchema = createBreadcrumbListSchema([
-    { name: 'Home', url: '/' },
-    { name: 'Components', url: '/components' },
-    { name: 'Bar Chart', url: '/components/bar-chart' },
+    { name: "Home", url: "/" },
+    { name: "Components", url: "/components" },
+    { name: "Bar Chart", url: "/components/bar-chart" },
   ]);
 
   const articleSchema = createArticleSchema(
-    'Bar Chart - datacn',
-    'Create beautiful bar charts with datacn. Supports horizontal and vertical orientations, stacking, and custom colors.'
+    "Bar Chart - datacn",
+    "Create beautiful bar charts with datacn. Supports horizontal and vertical orientations, stacking, and custom colors."
   );
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
+      <JsonLdScript schema={breadcrumbSchema} />
+      <JsonLdScript schema={articleSchema} />
       <div className="container py-8">
-        <Button variant="ghost" asChild className="mb-8">
+        <Button asChild className="mb-8" variant="ghost">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Link>
         </Button>
 
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="mx-auto max-w-4xl space-y-8">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight">Bar Chart</h1>
+            <h1 className="font-bold text-4xl tracking-tight">Bar Chart</h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Create beautiful bar charts with datacn. Supports horizontal and vertical
-              orientations, stacking, and custom colors.
+              Create beautiful bar charts with datacn. Supports horizontal and
+              vertical orientations, stacking, and custom colors.
             </p>
           </div>
 
@@ -113,16 +116,16 @@ export default function BarChartPage() {
           </Card>
 
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight mb-4">Example</h2>
+            <h2 className="mb-4 font-semibold text-2xl tracking-tight">
+              Example
+            </h2>
             <BarChartDemo />
           </div>
 
           <Card>
             <CardHeader>
               <CardTitle>Code</CardTitle>
-              <CardDescription>
-                Full implementation example
-              </CardDescription>
+              <CardDescription>Full implementation example</CardDescription>
             </CardHeader>
             <CardContent>
               <CodeBlock code={exampleCode} language="typescript" />
@@ -132,9 +135,7 @@ export default function BarChartPage() {
           <Card>
             <CardHeader>
               <CardTitle>API Reference</CardTitle>
-              <CardDescription>
-                Props and configuration options
-              </CardDescription>
+              <CardDescription>Props and configuration options</CardDescription>
             </CardHeader>
             <CardContent>
               <CodeBlock code={propsCode} language="typescript" />

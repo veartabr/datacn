@@ -1,11 +1,13 @@
-import { useState, useMemo, useEffect } from 'react';
-import { normalizeTimezone, formatWithTimezone } from '../time/timezone';
-import { DEFAULT_TIMEZONE } from '../core/constants';
+import { useMemo, useState } from "react";
+import { DEFAULT_TIMEZONE } from "../core/constants";
+import { formatWithTimezone, normalizeTimezone } from "../time/timezone";
 
 export function useTimezone(initialTimezone?: string) {
   const [timezone, setTimezone] = useState<string>(() => {
-    if (initialTimezone) return initialTimezone;
-    
+    if (initialTimezone) {
+      return initialTimezone;
+    }
+
     try {
       return Intl.DateTimeFormat().resolvedOptions().timeZone;
     } catch {
@@ -20,7 +22,7 @@ export function useTimezone(initialTimezone?: string) {
   }, [timezone]);
 
   const format = useMemo(() => {
-    return (date: Date | string, format: string = 'yyyy-MM-dd HH:mm:ss') => {
+    return (date: Date | string, format = "yyyy-MM-dd HH:mm:ss") => {
       return formatWithTimezone(date, timezone, format);
     };
   }, [timezone]);

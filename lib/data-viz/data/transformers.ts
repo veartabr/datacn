@@ -1,40 +1,53 @@
-import type { ChartData, DataPoint } from '../core/types';
-import { parseDate } from '../time/date-utils';
+import type { ChartData, DataPoint } from "../core/types";
 
-export function filterData(data: ChartData, predicate: (point: DataPoint) => boolean): ChartData {
+export function filterData(
+  data: ChartData,
+  predicate: (point: DataPoint) => boolean
+): ChartData {
   return {
     data: data.data.filter(predicate),
     metadata: data.metadata,
   };
 }
 
+function compareValues(
+  aVal: unknown,
+  bVal: unknown,
+  direction: "asc" | "desc"
+): number {
+  if (aVal === null || aVal === undefined) {
+    return direction === "asc" ? -1 : 1;
+  }
+  if (bVal === null || bVal === undefined) {
+    return direction === "asc" ? 1 : -1;
+  }
+
+  if (typeof aVal === "number" && typeof bVal === "number") {
+    return direction === "asc" ? aVal - bVal : bVal - aVal;
+  }
+
+  if (aVal instanceof Date && bVal instanceof Date) {
+    return direction === "asc"
+      ? aVal.getTime() - bVal.getTime()
+      : bVal.getTime() - aVal.getTime();
+  }
+
+  const aStr = String(aVal);
+  const bStr = String(bVal);
+  return direction === "asc"
+    ? aStr.localeCompare(bStr)
+    : bStr.localeCompare(aStr);
+}
+
 export function sortData(
   data: ChartData,
   key: string,
-  direction: 'asc' | 'desc' = 'asc'
+  direction: "asc" | "desc" = "asc"
 ): ChartData {
   const sorted = [...data.data].sort((a, b) => {
     const aVal = a[key];
     const bVal = b[key];
-
-    if (aVal === null || aVal === undefined) return direction === 'asc' ? -1 : 1;
-    if (bVal === null || bVal === undefined) return direction === 'asc' ? 1 : -1;
-
-    if (typeof aVal === 'number' && typeof bVal === 'number') {
-      return direction === 'asc' ? aVal - bVal : bVal - aVal;
-    }
-
-    if (aVal instanceof Date && bVal instanceof Date) {
-      return direction === 'asc' 
-        ? aVal.getTime() - bVal.getTime()
-        : bVal.getTime() - aVal.getTime();
-    }
-
-    const aStr = String(aVal);
-    const bStr = String(bVal);
-    return direction === 'asc' 
-      ? aStr.localeCompare(bStr)
-      : bStr.localeCompare(aStr);
+    return compareValues(aVal, bVal, direction);
   });
 
   return {
@@ -44,7 +57,7 @@ export function sortData(
 }
 
 export function selectColumns(data: ChartData, columns: string[]): ChartData {
-  const selected = data.data.map(point => {
+  const selected = data.data.map((point) => {
     const selectedPoint: DataPoint = {};
     for (const col of columns) {
       if (col in point) {
@@ -54,7 +67,7 @@ export function selectColumns(data: ChartData, columns: string[]): ChartData {
     return selectedPoint;
   });
 
-  const types: Record<string, 'string' | 'number' | 'date' | 'boolean'> = {};
+  const types: Record<string, "string" | "number" | "date" | "boolean"> = {};
   for (const col of columns) {
     if (col in data.metadata.types) {
       types[col] = data.metadata.types[col];
@@ -64,7 +77,7 @@ export function selectColumns(data: ChartData, columns: string[]): ChartData {
   return {
     data: selected,
     metadata: {
-      columns: columns.filter(col => data.metadata.columns.includes(col)),
+      columns: columns.filter((col) => data.metadata.columns.includes(col)),
       types,
       timezone: data.metadata.timezone,
       source: data.metadata.source,
@@ -72,8 +85,12 @@ export function selectColumns(data: ChartData, columns: string[]): ChartData {
   };
 }
 
-export function renameColumn(data: ChartData, oldName: string, newName: string): ChartData {
-  const renamed = data.data.map(point => {
+export function renameColumn(
+  data: ChartData,
+  oldName: string,
+  newName: string
+): ChartData {
+  const renamed = data.data.map((point) => {
     const renamedPoint: DataPoint = { ...point };
     if (oldName in renamedPoint) {
       renamedPoint[newName] = renamedPoint[oldName];
@@ -82,8 +99,10 @@ export function renameColumn(data: ChartData, oldName: string, newName: string):
     return renamedPoint;
   });
 
-  const columns = data.metadata.columns.map(col => col === oldName ? newName : col);
-  const types: Record<string, 'string' | 'number' | 'date' | 'boolean'> = {};
+  const columns = data.metadata.columns.map((col) =>
+    col === oldName ? newName : col
+  );
+  const types: Record<string, "string" | "number" | "date" | "boolean"> = {};
   for (const col of columns) {
     if (col === newName && oldName in data.metadata.types) {
       types[col] = data.metadata.types[oldName];
@@ -108,7 +127,7 @@ export function addCalculatedColumn(
   newColumn: string,
   calculate: (point: DataPoint) => string | number | Date | null
 ): ChartData {
-  const transformed = data.data.map(point => ({
+  const transformed = data.data.map((point) => ({
     ...point,
     [newColumn]: calculate(point),
   }));
@@ -121,14 +140,14 @@ export function addCalculatedColumn(
   const sampleValue = transformed.length > 0 ? transformed[0][newColumn] : null;
   const types = { ...data.metadata.types };
   if (sampleValue !== null && sampleValue !== undefined) {
-    if (typeof sampleValue === 'number') {
-      types[newColumn] = 'number';
+    if (typeof sampleValue === "number") {
+      types[newColumn] = "number";
     } else if (sampleValue instanceof Date) {
-      types[newColumn] = 'date';
-    } else if (typeof sampleValue === 'boolean') {
-      types[newColumn] = 'boolean';
+      types[newColumn] = "date";
+    } else if (typeof sampleValue === "boolean") {
+      types[newColumn] = "boolean";
     } else {
-      types[newColumn] = 'string';
+      types[newColumn] = "string";
     }
   }
 
@@ -164,21 +183,24 @@ export function pivotData(
   columns?: string[]
 ): ChartData {
   const indexValues = new Set<string>();
-  const pivotMap = new Map<string, Map<string, string | number | Date | null>>();
+  const pivotMap = new Map<
+    string,
+    Map<string, string | number | Date | null>
+  >();
 
   for (const point of data.data) {
-    const indexValue = String(point[indexColumn] ?? '');
+    const indexValue = String(point[indexColumn] ?? "");
     indexValues.add(indexValue);
 
     if (!pivotMap.has(indexValue)) {
       pivotMap.set(indexValue, new Map());
     }
 
-    const row = pivotMap.get(indexValue)!;
-    const columnName = columns 
-      ? String(point[columns[0]] ?? '')
-      : 'value';
-    row.set(columnName, point[valueColumn] ?? null);
+    const row = pivotMap.get(indexValue);
+    if (row) {
+      const columnName = columns ? String(point[columns[0]] ?? "") : "value";
+      row.set(columnName, point[valueColumn] ?? null);
+    }
   }
 
   const result: DataPoint[] = [];
@@ -193,13 +215,13 @@ export function pivotData(
     result.push(resultPoint);
   }
 
-  const types: Record<string, 'string' | 'number' | 'date' | 'boolean'> = {
-    [indexColumn]: data.metadata.types[indexColumn] || 'string',
+  const types: Record<string, "string" | "number" | "date" | "boolean"> = {
+    [indexColumn]: data.metadata.types[indexColumn] || "string",
   };
 
   for (const col of resultColumns) {
     if (col !== indexColumn) {
-      types[col] = data.metadata.types[valueColumn] || 'string';
+      types[col] = data.metadata.types[valueColumn] || "string";
     }
   }
 

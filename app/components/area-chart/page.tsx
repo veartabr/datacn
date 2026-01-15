@@ -1,17 +1,27 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CodeBlock } from '@/components/code-block';
-import { AreaChartDemo } from '@/components/area-chart-demo';
-import { createPageMetadata } from '@/app/metadata';
-import { createBreadcrumbListSchema, createArticleSchema } from '@/lib/seo/structured-data';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { createPageMetadata } from "@/app/metadata";
+import { AreaChartDemo } from "@/components/area-chart-demo";
+import { CodeBlock } from "@/components/code-block";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { JsonLdScript } from "@/lib/seo/json-ld-script";
+import {
+  createArticleSchema,
+  createBreadcrumbListSchema,
+} from "@/lib/seo/structured-data";
 
 export const metadata: Metadata = createPageMetadata(
-  'Area Chart',
-  'Create stacked or overlapping area charts with datacn. Great for showing cumulative values over time.',
-  '/components/area-chart'
+  "Area Chart",
+  "Create stacked or overlapping area charts with datacn. Great for showing cumulative values over time.",
+  "/components/area-chart"
 );
 
 const exampleCode = `'use client';
@@ -40,45 +50,41 @@ export function MyAreaChart() {
 
 export default function AreaChartPage() {
   const breadcrumbSchema = createBreadcrumbListSchema([
-    { name: 'Home', url: '/' },
-    { name: 'Components', url: '/components' },
-    { name: 'Area Chart', url: '/components/area-chart' },
+    { name: "Home", url: "/" },
+    { name: "Components", url: "/components" },
+    { name: "Area Chart", url: "/components/area-chart" },
   ]);
 
   const articleSchema = createArticleSchema(
-    'Area Chart - datacn',
-    'Create stacked or overlapping area charts with datacn. Great for showing cumulative values over time.'
+    "Area Chart - datacn",
+    "Create stacked or overlapping area charts with datacn. Great for showing cumulative values over time."
   );
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
+      <JsonLdScript schema={breadcrumbSchema} />
+      <JsonLdScript schema={articleSchema} />
       <div className="container py-8">
-        <Button variant="ghost" asChild className="mb-8">
+        <Button asChild className="mb-8" variant="ghost">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Link>
         </Button>
 
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="mx-auto max-w-4xl space-y-8">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight">Area Chart</h1>
+            <h1 className="font-bold text-4xl tracking-tight">Area Chart</h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Create stacked or overlapping area charts with datacn. Great for showing
-              cumulative values over time.
+              Create stacked or overlapping area charts with datacn. Great for
+              showing cumulative values over time.
             </p>
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight mb-4">Example</h2>
+            <h2 className="mb-4 font-semibold text-2xl tracking-tight">
+              Example
+            </h2>
             <AreaChartDemo />
           </div>
 

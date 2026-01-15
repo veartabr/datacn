@@ -1,11 +1,26 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
-import type { ChartData, LineChartConfig, TimestampMarker } from '../../core/types';
-import { validateChartData } from '../../data/formats';
-import { DEFAULT_COLORS, DEFAULT_STROKE_WIDTH, DEFAULT_CURVE } from '../../core/constants';
-import { parseDate } from '../../time/date-utils';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart as RechartsLineChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
+  DEFAULT_COLORS,
+  DEFAULT_CURVE,
+  DEFAULT_STROKE_WIDTH,
+} from "../../core/constants";
+import type {
+  ChartData,
+  LineChartConfig,
+  TimestampMarker,
+} from "../../core/types";
+import { validateChartData } from "../../data/formats";
+import { parseDate } from "../../time/date-utils";
 
 export interface LineChartProps {
   data: ChartData;
@@ -15,8 +30,14 @@ export interface LineChartProps {
   className?: string;
 }
 
-export function LineChart({ data, config, markers, timezone, className }: LineChartProps) {
-  if (!validateChartData(data, 'line')) {
+export function LineChart({
+  data,
+  config,
+  markers,
+  timezone,
+  className,
+}: LineChartProps) {
+  if (!validateChartData(data, "line")) {
     return (
       <div className={className}>
         <p>Invalid data for line chart</p>
@@ -37,32 +58,34 @@ export function LineChart({ data, config, markers, timezone, className }: LineCh
   const curve = config.curve || DEFAULT_CURVE;
 
   return (
-    <ResponsiveContainer width="100%" height="100%" className={className}>
+    <ResponsiveContainer className={className} height="100%" width="100%">
       <RechartsLineChart data={data.data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey={config.xKey}
-          type={data.metadata.types[config.xKey] === 'date' ? 'number' : 'category'}
           scale="time"
           tickFormatter={(value) => {
-            if (data.metadata.types[config.xKey] === 'date') {
+            if (data.metadata.types[config.xKey] === "date") {
               const date = parseDate(value);
               return date ? date.toLocaleDateString() : String(value);
             }
             return String(value);
           }}
+          type={
+            data.metadata.types[config.xKey] === "date" ? "number" : "category"
+          }
         />
         <YAxis />
         <Legend />
         {config.yKeys.map((key, index) => (
           <Line
-            key={key}
-            type={curve}
+            activeDot={{ r: 6 }}
             dataKey={key}
+            dot={{ r: 4 }}
+            key={key}
             stroke={colors[index % colors.length]}
             strokeWidth={strokeWidth}
-            dot={{ r: 4 }}
-            activeDot={{ r: 6 }}
+            type={curve}
           />
         ))}
       </RechartsLineChart>

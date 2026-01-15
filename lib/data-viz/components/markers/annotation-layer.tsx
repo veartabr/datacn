@@ -1,13 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import type { TimestampMarker } from '../../core/types';
-import { TimestampMarkerComponent } from './timestamp-marker';
-import { parseDate } from '../../time/date-utils';
+import type { TimestampMarker } from "../../core/types";
+import { parseDate } from "../../time/date-utils";
+import { TimestampMarkerComponent } from "./timestamp-marker";
 
 export interface AnnotationLayerProps {
   markers: TimestampMarker[];
-  chartType: 'bar' | 'line' | 'area' | 'pie' | 'time-series';
+  chartType: "bar" | "line" | "area" | "pie" | "time-series";
   data: any[];
   xKey: string;
   chartWidth: number;
@@ -26,26 +25,34 @@ export function AnnotationLayer({
   xScale,
   timezone,
 }: AnnotationLayerProps) {
-  if (markers.length === 0 || chartType === 'pie') {
+  if (markers.length === 0 || chartType === "pie") {
     return null;
   }
 
   const calculateXPosition = (marker: TimestampMarker): number | null => {
     const markerTime = parseDate(marker.timestamp);
-    if (!markerTime) return null;
+    if (!markerTime) {
+      return null;
+    }
 
     if (xScale) {
       return xScale(markerTime);
     }
 
-    if (data.length === 0) return null;
+    if (data.length === 0) {
+      return null;
+    }
 
-    const dataTimes = data.map((d) => {
-      const time = parseDate(d[xKey] || d.timestamp);
-      return time ? time.getTime() : null;
-    }).filter((t): t is number => t !== null);
+    const dataTimes = data
+      .map((d) => {
+        const time = parseDate(d[xKey] || d.timestamp);
+        return time ? time.getTime() : null;
+      })
+      .filter((t): t is number => t !== null);
 
-    if (dataTimes.length === 0) return null;
+    if (dataTimes.length === 0) {
+      return null;
+    }
 
     const minTime = Math.min(...dataTimes);
     const maxTime = Math.max(...dataTimes);
@@ -63,15 +70,17 @@ export function AnnotationLayer({
     <g>
       {markers.map((marker, index) => {
         const xPosition = calculateXPosition(marker);
-        if (xPosition === null) return null;
+        if (xPosition === null) {
+          return null;
+        }
 
         return (
           <TimestampMarkerComponent
+            chartHeight={chartHeight}
             key={index}
             marker={marker}
-            xPosition={xPosition}
-            chartHeight={chartHeight}
             timezone={timezone}
+            xPosition={xPosition}
           />
         );
       })}

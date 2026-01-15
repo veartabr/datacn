@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
-import type { ChartData, AggregationConfig } from '../core/types';
-import { aggregate } from '../data/aggregators';
+import { useMemo } from "react";
+import type { AggregationConfig, ChartData } from "../core/types";
+import { aggregate } from "../data/aggregators";
 
 export function useDataAggregation(
   data: ChartData,
   config: AggregationConfig | null | undefined
 ) {
   return useMemo(() => {
-    if (!config || !data || data.data.length === 0) {
+    if (!(config && data) || data.data.length === 0) {
       return {
         aggregated: data,
         loading: false,
@@ -26,7 +26,7 @@ export function useDataAggregation(
       return {
         aggregated: data,
         loading: false,
-        error: error instanceof Error ? error : new Error('Unknown error'),
+        error: error instanceof Error ? error : new Error("Unknown error"),
       };
     }
   }, [data, config]);

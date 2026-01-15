@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import type { TimestampMarker } from '../../core/types';
-import { parseDate } from '../../time/date-utils';
-import { formatDate } from '../../formatters/date';
+import type { TimestampMarker } from "../../core/types";
+import { formatDate } from "../../formatters/date";
+import { parseDate } from "../../time/date-utils";
 
 export interface TimestampMarkerProps {
   marker: TimestampMarker;
@@ -19,29 +18,29 @@ export function TimestampMarkerComponent({
   timezone,
 }: TimestampMarkerProps) {
   const timestamp = parseDate(marker.timestamp);
-  const color = marker.color || '#ef4444';
-  const type = marker.type || 'line';
+  const color = marker.color || "#ef4444";
+  const type = marker.type || "line";
 
-  if (type === 'line') {
+  if (type === "line") {
     return (
       <g>
         <line
-          x1={xPosition}
-          y1={0}
-          x2={xPosition}
-          y2={chartHeight}
           stroke={color}
-          strokeWidth={2}
           strokeDasharray="4 4"
+          strokeWidth={2}
+          x1={xPosition}
+          x2={xPosition}
+          y1={0}
+          y2={chartHeight}
         />
         {marker.label && (
           <text
-            x={xPosition}
-            y={-10}
             fill={color}
             fontSize={12}
-            textAnchor="middle"
             fontWeight="bold"
+            textAnchor="middle"
+            x={xPosition}
+            y={-10}
           >
             {marker.label}
           </text>
@@ -50,25 +49,25 @@ export function TimestampMarkerComponent({
     );
   }
 
-  if (type === 'dot') {
+  if (type === "dot") {
     return (
       <g>
         <circle
           cx={xPosition}
           cy={chartHeight / 2}
-          r={6}
           fill={color}
+          r={6}
           stroke="#fff"
           strokeWidth={2}
         />
         {marker.label && (
           <text
-            x={xPosition}
-            y={chartHeight / 2 - 15}
             fill={color}
             fontSize={12}
-            textAnchor="middle"
             fontWeight="bold"
+            textAnchor="middle"
+            x={xPosition}
+            y={chartHeight / 2 - 15}
           >
             {marker.label}
           </text>
@@ -77,46 +76,46 @@ export function TimestampMarkerComponent({
     );
   }
 
-  if (type === 'annotation') {
+  if (type === "annotation") {
     return (
       <g>
         <line
-          x1={xPosition}
-          y1={0}
-          x2={xPosition}
-          y2={chartHeight}
+          opacity={0.3}
           stroke={color}
           strokeWidth={1}
-          opacity={0.3}
+          x1={xPosition}
+          x2={xPosition}
+          y1={0}
+          y2={chartHeight}
         />
         <rect
-          x={xPosition - 60}
-          y={10}
-          width={120}
-          height={40}
           fill={color}
+          height={40}
           opacity={0.9}
           rx={4}
+          width={120}
+          x={xPosition - 60}
+          y={10}
         />
         <text
-          x={xPosition}
-          y={25}
           fill="#fff"
           fontSize={11}
-          textAnchor="middle"
           fontWeight="bold"
+          textAnchor="middle"
+          x={xPosition}
+          y={25}
         >
           {marker.label}
         </text>
         {timestamp && (
           <text
-            x={xPosition}
-            y={40}
             fill="#fff"
             fontSize={10}
             textAnchor="middle"
+            x={xPosition}
+            y={40}
           >
-            {formatDate(timestamp, 'MMM dd, yyyy', timezone)}
+            {formatDate(timestamp, "MMM dd, yyyy", timezone)}
           </text>
         )}
       </g>

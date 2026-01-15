@@ -1,7 +1,98 @@
-import type { ChartData, JoinConfig, DataPoint, TimeSeriesDataPoint } from '../core/types';
-import { parseDate } from '../time/date-utils';
+import type {
+  ChartData,
+  DataPoint,
+  JoinConfig,
+  TimeSeriesDataPoint,
+} from "../core/types";
+import { parseDate } from "../time/date-utils";
 
-export function joinData(left: ChartData, right: ChartData, config: JoinConfig): ChartData {
+function buildRightMap(
+  right: ChartData,
+  rightKey: string
+): Map<string | number, DataPoint[]> {
+  const rightMap = new Map<string | number, DataPoint[]>();
+  for (const point of right.data) {
+    const key = point[rightKey];
+    if (key === null || key === undefined) {
+      continue;
+    }
+    if (!rightMap.has(key)) {
+      rightMap.set(key, []);
+    }
+    rightMap.get(key)?.push(point);
+  }
+  return rightMap;
+}
+
+function performLeftJoin(
+  left: ChartData,
+  rightMap: Map<string | number, DataPoint[]>,
+  leftKey: string,
+  rightKey: string,
+  type: JoinConfig["type"]
+): { result: DataPoint[]; leftMatched: Set<string | number> } {
+  const result: DataPoint[] = [];
+  const leftMatched = new Set<string | number>();
+
+  for (const leftPoint of left.data) {
+    const key = leftPoint[leftKey];
+    if (key === null || key === undefined) {
+      if (type === "left" || type === "full") {
+        result.push({ ...leftPoint });
+      }
+      continue;
+    }
+
+    const rightMatches = rightMap.get(key) || [];
+    leftMatched.add(key);
+
+    if (rightMatches.length === 0) {
+      if (type === "left" || type === "full") {
+        result.push({ ...leftPoint });
+      }
+    } else {
+      for (const rightPoint of rightMatches) {
+        const joined: DataPoint = { ...leftPoint };
+        for (const key in rightPoint) {
+          if (!Object.hasOwn(rightPoint, key)) {
+            continue;
+          }
+          if (key !== rightKey) {
+            joined[key] = rightPoint[key];
+          }
+        }
+        result.push(joined);
+      }
+    }
+  }
+
+  return { result, leftMatched };
+}
+
+function performRightJoin(
+  rightMap: Map<string | number, DataPoint[]>,
+  leftMatched: Set<string | number>,
+  type: JoinConfig["type"],
+  result: DataPoint[]
+): void {
+  if (type !== "right" && type !== "full") {
+    return;
+  }
+
+  for (const [key, rightPoints] of rightMap) {
+    if (!leftMatched.has(key)) {
+      for (const rightPoint of rightPoints) {
+        result.push({ ...rightPoint });
+      }
+    }
+  }
+}
+
+export function joinData(
+  left: ChartData,
+  right: ChartData,
+  config: JoinConfig
+): ChartData {
   const { type, leftKey, rightKey } = config;
 
   if (!left.metadata.columns.includes(leftKey)) {
@@ -12,60 +103,21 @@ export function joinData(left: ChartData, right: ChartData, config: JoinConfig):
     throw new Error(`Right key "${rightKey}" not found in right data`);
   }
 
-  const rightMap = new Map<string | number, DataPoint[]>();
-  for (const point of right.data) {
-    const key = point[rightKey];
-    if (key === null || key === undefined) continue;
-    if (!rightMap.has(key)) {
-      rightMap.set(key, []);
-    }
-    rightMap.get(key)!.push(point);
-  }
+  const rightMap = buildRightMap(right, rightKey);
+  const { result, leftMatched } = performLeftJoin(
+    left,
+    rightMap,
+    leftKey,
+    rightKey,
+    type
+  );
+  performRightJoin(rightMap, leftMatched, type, result);
 
-  const result: DataPoint[] = [];
-  const leftMatched = new Set<string | number>();
-
-  for (const leftPoint of left.data) {
-    const key = leftPoint[leftKey];
-    if (key === null || key === undefined) {
-      if (type === 'left' || type === 'full') {
-        result.push({ ...leftPoint });
-      }
-      continue;
-    }
-
-    const rightMatches = rightMap.get(key) || [];
-    leftMatched.add(key);
-
-    if (rightMatches.length === 0) {
-      if (type === 'left' || type === 'full') {
-        result.push({ ...leftPoint });
-      }
-    } else {
-      for (const rightPoint of rightMatches) {
-        const joined: DataPoint = { ...leftPoint };
-        for (const key in rightPoint) {
-          if (key !== config.rightKey) {
-            joined[key] = rightPoint[key];
-          }
-        }
-        result.push(joined);
-      }
-    }
-  }
-
-  if (type === 'right' || type === 'full') {
-    for (const [key, rightPoints] of rightMap) {
-      if (!leftMatched.has(key)) {
-        for (const rightPoint of rightPoints) {
-          result.push({ ...rightPoint });
-        }
-      }
-    }
-  }
-
-  const columns = new Set<string>([...left.metadata.columns, ...right.metadata.columns]);
-  const types: Record<string, 'string' | 'number' | 'date' | 'boolean'> = {
+  const columns = new Set<string>([
+    ...left.metadata.columns,
+    ...right.metadata.columns,
+  ]);
+  const types: Record<string, "string" | "number" | "date" | "boolean"> = {
     ...left.metadata.types,
     ...right.metadata.types,
   };
@@ -76,7 +128,10 @@ export function joinData(left: ChartData, right: ChartData, config: JoinConfig):
       columns: Array.from(columns),
       types,
       timezone: left.metadata.timezone || right.metadata.timezone,
-      source: [left.metadata.source, right.metadata.source].filter(Boolean).join(', ') || undefined,
+      source:
+        [left.metadata.source, right.metadata.source]
+          .filter(Boolean)
+          .join(", ") || undefined,
     },
   };
 }
@@ -84,8 +139,12 @@ export function joinData(left: ChartData, right: ChartData, config: JoinConfig):
 export function mergeTimeSeries(
   ...series: TimeSeriesDataPoint[][]
 ): TimeSeriesDataPoint[] {
-  if (series.length === 0) return [];
-  if (series.length === 1) return series[0];
+  if (series.length === 0) {
+    return [];
+  }
+  if (series.length === 1) {
+    return series[0];
+  }
 
   const allPoints: TimeSeriesDataPoint[] = [];
   for (const s of series) {
@@ -96,18 +155,23 @@ export function mergeTimeSeries(
 
   for (const point of allPoints) {
     const timestamp = parseDate(point.timestamp);
-    if (!timestamp) continue;
+    if (!timestamp) {
+      continue;
+    }
 
     const key = timestamp.toISOString();
-    if (!timeMap.has(key)) {
-      timeMap.set(key, { ...point });
-    } else {
-      const existing = timeMap.get(key)!;
+    const existing = timeMap.get(key);
+    if (existing) {
       for (const field in point) {
-        if (field !== 'timestamp' && field !== 'timezone') {
+        if (!Object.hasOwn(point, field)) {
+          continue;
+        }
+        if (field !== "timestamp" && field !== "timezone") {
           existing[field] = point[field];
         }
       }
+    } else {
+      timeMap.set(key, { ...point });
     }
   }
 
@@ -115,7 +179,9 @@ export function mergeTimeSeries(
   merged.sort((a, b) => {
     const aTime = parseDate(a.timestamp);
     const bTime = parseDate(b.timestamp);
-    if (!aTime || !bTime) return 0;
+    if (!(aTime && bTime)) {
+      return 0;
+    }
     return aTime.getTime() - bTime.getTime();
   });
 

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ChartDemo } from '@/components/chart-demo';
-import { PieChart } from '@/lib/data-viz/components/charts/pie-chart';
-import { useChartData } from '@/lib/data-viz/hooks/use-chart-data';
-import { pieChartData } from '@/app/examples/data';
+import { pieChartData } from "@/app/examples/data";
+import { ChartDemo } from "@/components/chart-demo";
+import { PieChart } from "@/lib/data-viz/components/charts/pie-chart";
+import { useChartData } from "@/lib/data-viz/hooks/use-chart-data";
 
 export function PieChartDemo() {
   const { data } = useChartData(pieChartData.data);
@@ -12,12 +12,12 @@ export function PieChartDemo() {
     <ChartDemo
       chart={
         <PieChart
+          config={{ dataKey: "value", nameKey: "category" }}
           data={data}
-          config={{ dataKey: 'value', nameKey: 'category' }}
         />
       }
+      config={{ dataKey: "value", nameKey: "category" }}
       data={pieChartData.data}
-      config={{ dataKey: 'value', nameKey: 'category' }}
     />
   );
 }

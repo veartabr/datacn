@@ -1,17 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Code2, Database } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
+import { ChevronDown, ChevronUp, Code2, Database } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils/cn";
 
 interface ChartDemoProps {
   title?: string;
   description?: string;
   chart: React.ReactNode;
-  data?: any;
-  config?: any;
+  data?: unknown;
+  config?: unknown;
   code?: string;
   className?: string;
 }
@@ -30,7 +36,7 @@ export function ChartDemo({
   const [showCode, setShowCode] = useState(false);
 
   return (
-    <Card className={cn('w-full', className)}>
+    <Card className={cn("w-full", className)}>
       {(title || description) && (
         <CardHeader>
           {title && <CardTitle>{title}</CardTitle>}
@@ -47,10 +53,10 @@ export function ChartDemo({
             {data && (
               <div>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowData(!showData)}
                   className="w-full justify-between"
+                  onClick={() => setShowData(!showData)}
+                  size="sm"
+                  variant="outline"
                 >
                   <span className="flex items-center gap-2">
                     <Database className="h-4 w-4" />
@@ -64,7 +70,7 @@ export function ChartDemo({
                 </Button>
                 {showData && (
                   <div className="mt-2 rounded-md border bg-muted p-4">
-                    <pre className="text-xs overflow-x-auto">
+                    <pre className="overflow-x-auto text-xs">
                       {JSON.stringify(data, null, 2)}
                     </pre>
                   </div>
@@ -75,10 +81,10 @@ export function ChartDemo({
             {config && (
               <div>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowConfig(!showConfig)}
                   className="w-full justify-between"
+                  onClick={() => setShowConfig(!showConfig)}
+                  size="sm"
+                  variant="outline"
                 >
                   <span className="flex items-center gap-2">
                     <Code2 className="h-4 w-4" />
@@ -92,7 +98,7 @@ export function ChartDemo({
                 </Button>
                 {showConfig && (
                   <div className="mt-2 rounded-md border bg-muted p-4">
-                    <pre className="text-xs overflow-x-auto">
+                    <pre className="overflow-x-auto text-xs">
                       {JSON.stringify(config, null, 2)}
                     </pre>
                   </div>
@@ -103,10 +109,10 @@ export function ChartDemo({
             {code && (
               <div>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowCode(!showCode)}
                   className="w-full justify-between"
+                  onClick={() => setShowCode(!showCode)}
+                  size="sm"
+                  variant="outline"
                 >
                   <span className="flex items-center gap-2">
                     <Code2 className="h-4 w-4" />
@@ -118,9 +124,7 @@ export function ChartDemo({
                     <ChevronDown className="h-4 w-4" />
                   )}
                 </Button>
-                {showCode && (
-                  <div className="mt-2">{code}</div>
-                )}
+                {showCode && <div className="mt-2">{code}</div>}
               </div>
             )}
           </div>

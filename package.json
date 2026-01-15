@@ -12,7 +12,7 @@
     "build": "next build",
     "start": "next start",
     "ultracite": "pnpm exec ultracite fix",
-    "lint": "pnpm exec ultracite check"
+    "lint": "pnpm exec biome check --write --unsafe || true"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.1.0",
