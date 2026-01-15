@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/chart";
 import {
   createBarChartConfig,
+  generateStableChartId,
   getColorVariable,
 } from "../../core/chart-config";
 import { DEFAULT_COLORS } from "../../core/constants";
@@ -47,9 +48,10 @@ export function BarChart({ data, config, className }: BarChartProps) {
   const colors = config.colors || DEFAULT_COLORS;
   const chartConfig = createBarChartConfig(config, colors);
   const dataKey = config.horizontal ? config.xKey : config.yKey;
+  const chartId = generateStableChartId([config.yKey]);
 
   return (
-    <ChartContainer className={className} config={chartConfig}>
+    <ChartContainer className={className} config={chartConfig} id={chartId}>
       <RechartsBarChart
         accessibilityLayer
         data={data.data}

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/chart";
 import {
   createLineChartConfig,
+  generateStableChartId,
   getColorVariable,
 } from "../../core/chart-config";
 import {
@@ -60,15 +61,18 @@ export function LineChart({ data, config, className }: LineChartProps) {
   const strokeWidth = config.strokeWidth || DEFAULT_STROKE_WIDTH;
   const curve = config.curve || DEFAULT_CURVE;
   const chartConfig = createLineChartConfig(config, colors);
+  const chartId = generateStableChartId(config.yKeys);
 
   return (
-    <ChartContainer className={className} config={chartConfig}>
+    <ChartContainer className={className} config={chartConfig} id={chartId}>
       <RechartsLineChart accessibilityLayer data={data.data}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
         <XAxis
           axisLine={false}
           dataKey={config.xKey}
-          scale={data.metadata.types[config.xKey] === "date" ? "time" : undefined}
+          scale={
+            data.metadata.types[config.xKey] === "date" ? "time" : undefined
+          }
           tickFormatter={(value) => {
             if (data.metadata.types[config.xKey] === "date") {
               const date = parseDate(value);
@@ -83,7 +87,11 @@ export function LineChart({ data, config, className }: LineChartProps) {
         />
         <YAxis axisLine={false} tickLine={false} />
         <ChartTooltip content={<ChartTooltipContent />} />
-        <ChartLegend content={<ChartLegendContent />} />
+        <ChartLegend
+          content={({ payload, verticalAlign }) => (
+            <ChartLegendContent payload={payload} verticalAlign={verticalAlign} />
+          )}
+        />
         {config.yKeys.map((key) => (
           <Line
             activeDot={{ r: 6 }}

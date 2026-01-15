@@ -13,6 +13,21 @@ function sanitizeCssVariableName(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+export function generateStableChartId(keys: string[]): string {
+  const keyString = keys.sort().join("-");
+  return `chart-${simpleHash(keyString)}`;
+}
+
 export function getColorVariable(key: string): string {
   const sanitized = sanitizeCssVariableName(key);
   return `var(--color-${sanitized})`;

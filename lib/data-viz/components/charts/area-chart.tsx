@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/chart";
 import {
   createAreaChartConfig,
+  generateStableChartId,
   getColorVariable,
 } from "../../core/chart-config";
 import { DEFAULT_COLORS, DEFAULT_CURVE } from "../../core/constants";
@@ -50,9 +51,10 @@ export function AreaChart({ data, config, className }: AreaChartProps) {
   const colors = config.colors || DEFAULT_COLORS;
   const curve = config.curve || DEFAULT_CURVE;
   const chartConfig = createAreaChartConfig(config, colors);
+  const chartId = generateStableChartId(config.yKeys);
 
   return (
-    <ChartContainer className={className} config={chartConfig}>
+    <ChartContainer className={className} config={chartConfig} id={chartId}>
       <RechartsAreaChart
         accessibilityLayer
         data={data.data}
@@ -63,7 +65,9 @@ export function AreaChart({ data, config, className }: AreaChartProps) {
         <XAxis
           axisLine={false}
           dataKey={config.xKey}
-          scale={data.metadata.types[config.xKey] === "date" ? "time" : undefined}
+          scale={
+            data.metadata.types[config.xKey] === "date" ? "time" : undefined
+          }
           tickFormatter={(value) => {
             if (data.metadata.types[config.xKey] === "date") {
               const date = parseDate(value);
@@ -78,7 +82,11 @@ export function AreaChart({ data, config, className }: AreaChartProps) {
         />
         <YAxis axisLine={false} tickLine={false} />
         <ChartTooltip content={<ChartTooltipContent />} />
-        <ChartLegend content={<ChartLegendContent />} />
+        <ChartLegend
+          content={({ payload, verticalAlign }) => (
+            <ChartLegendContent payload={payload} verticalAlign={verticalAlign} />
+          )}
+        />
         {config.yKeys.map((key) => (
           <Area
             dataKey={key}

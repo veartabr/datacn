@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/chart";
 import {
   createTimeSeriesChartConfig,
+  generateStableChartId,
   getColorVariable,
 } from "../../core/chart-config";
 import {
@@ -52,9 +53,10 @@ export function TimeSeriesChart({
   const strokeWidth = DEFAULT_STROKE_WIDTH;
   const curve = DEFAULT_CURVE;
   const chartConfig = createTimeSeriesChartConfig(config, colors);
+  const chartId = generateStableChartId(config.yKeys);
 
   return (
-    <ChartContainer className={className} config={chartConfig}>
+    <ChartContainer className={className} config={chartConfig} id={chartId}>
       <RechartsLineChart accessibilityLayer data={chartData.data}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
         <XAxis
@@ -80,7 +82,11 @@ export function TimeSeriesChart({
             />
           }
         />
-        <ChartLegend content={<ChartLegendContent />} />
+        <ChartLegend
+          content={({ payload, verticalAlign }) => (
+            <ChartLegendContent payload={payload} verticalAlign={verticalAlign} />
+          )}
+        />
         {config.yKeys.map((key) => (
           <Line
             activeDot={{ r: 6 }}

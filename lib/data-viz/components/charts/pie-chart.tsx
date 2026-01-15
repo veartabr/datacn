@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/chart";
 import {
   createPieChartConfig,
+  generateStableChartId,
   getColorVariable,
 } from "../../core/chart-config";
 import { DEFAULT_COLORS } from "../../core/constants";
@@ -41,9 +42,13 @@ export function PieChart({ data, config, className }: PieChartProps) {
 
   const colors = config.colors || DEFAULT_COLORS;
   const chartConfig = createPieChartConfig(config, colors, data.data);
+  const uniqueNames = Array.from(
+    new Set(data.data.map((entry) => String(entry[config.nameKey])))
+  );
+  const chartId = generateStableChartId(uniqueNames);
 
   return (
-    <ChartContainer className={className} config={chartConfig}>
+    <ChartContainer className={className} config={chartConfig} id={chartId}>
       <RechartsPieChart>
         <Pie
           cx="50%"
@@ -60,7 +65,11 @@ export function PieChart({ data, config, className }: PieChartProps) {
           })}
         </Pie>
         <ChartTooltip content={<ChartTooltipContent />} />
-        <ChartLegend content={<ChartLegendContent />} />
+        <ChartLegend
+          content={({ payload, verticalAlign }) => (
+            <ChartLegendContent payload={payload} verticalAlign={verticalAlign} />
+          )}
+        />
       </RechartsPieChart>
     </ChartContainer>
   );
