@@ -67,7 +67,10 @@ export function PieChart({ data, config, className }: PieChartProps) {
         <ChartTooltip content={<ChartTooltipContent />} />
         <ChartLegend
           content={({ payload, verticalAlign }) => (
-            <ChartLegendContent payload={payload} verticalAlign={verticalAlign} />
+            <ChartLegendContent
+              payload={payload}
+              verticalAlign={verticalAlign}
+            />
           )}
         />
       </RechartsPieChart>

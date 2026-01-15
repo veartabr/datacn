@@ -89,7 +89,10 @@ export function LineChart({ data, config, className }: LineChartProps) {
         <ChartTooltip content={<ChartTooltipContent />} />
         <ChartLegend
           content={({ payload, verticalAlign }) => (
-            <ChartLegendContent payload={payload} verticalAlign={verticalAlign} />
+            <ChartLegendContent
+              payload={payload}
+              verticalAlign={verticalAlign}
+            />
           )}
         />
         {config.yKeys.map((key) => (

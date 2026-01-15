@@ -84,7 +84,10 @@ export function TimeSeriesChart({
         />
         <ChartLegend
           content={({ payload, verticalAlign }) => (
-            <ChartLegendContent payload={payload} verticalAlign={verticalAlign} />
+            <ChartLegendContent
+              payload={payload}
+              verticalAlign={verticalAlign}
+            />
           )}
         />
         {config.yKeys.map((key) => (

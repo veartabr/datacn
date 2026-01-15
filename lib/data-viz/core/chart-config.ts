@@ -18,7 +18,7 @@ function simpleHash(str: string): string {
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
     hash = (hash << 5) - hash + char;
-    hash = hash & hash;
+    hash &= hash;
   }
   return Math.abs(hash).toString(36);
 }
